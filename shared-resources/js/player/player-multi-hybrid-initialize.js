@@ -796,6 +796,9 @@ Opencast.Initialize = (function ()
                     Opencast.segments_text.doToggleSegmentsText();
                     break;
                 case 3:
+                    Opencast.Annotation_Comment_List.doToggleComments();
+                    break;
+                case 4:
                     // Have a look at the - (engage-ui) watch.html - search trigger-function
                     break;
                 }
@@ -831,6 +834,10 @@ Opencast.Initialize = (function ()
         $('#oc_checkbox-annotations').click(function ()
         {
             Opencast.Annotation_Chapter.doToggleAnnotation_Chapter();
+        });
+        $('#oc_checkbox-annotation-comment').click(function ()
+        {
+            Opencast.Annotation_Comment.doToggleAnnotation_Comment();
         });
         //bind click events to show dialog
         $('#oc_shortcuts').dialog(
@@ -1154,6 +1161,8 @@ Opencast.Initialize = (function ()
         {
             newHeight = Math.round(newHeight);
             $('#oc_flash-player').css("height", newHeight + "px");
+            //Trigger Resize Event
+            $('#oc_flash-player').trigger('doResize');
         }
     }
 

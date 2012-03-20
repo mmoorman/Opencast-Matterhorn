@@ -43,6 +43,7 @@ Opencast.segments_text = (function ()
     {
         Opencast.Player.addEvent(Opencast.logging.SHOW_TEXT_SEGMENTS);
         // Hide other Tabs
+        Opencast.Annotation_Comment_List.hideComments();
         Opencast.Description.hideDescription();
         Opencast.segments.hideSegments();
         Opencast.search.hideSearch();
@@ -143,6 +144,7 @@ Opencast.segments_text = (function ()
     {
         if ($('#oc_btn-slidetext').attr("title") === SEGMENTS_TEXT)
         {
+        	Opencast.Annotation_Comment_List.hideComments();
             Opencast.Description.hideDescription();
             Opencast.segments.hideSegments();
             showSegmentsText();
