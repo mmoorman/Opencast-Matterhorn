@@ -391,7 +391,7 @@ Opencast.Annotation_Comment_List = (function ()
                 $('#oc-comments-list').show();
                 $('#oc-comments-list-add-form').show();
                 //scroll down
-                $(window).scrollTop( $('#oc_btn-comments-tab').offset().top - 10 );
+                //$(window).scrollTop( $('#oc_btn-comments-tab').offset().top - 10 );
 
             },
             // If no data comes back
