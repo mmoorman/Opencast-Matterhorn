@@ -25,9 +25,9 @@ Opencast.Analytics = (function ()
     var ANALYTICS = "Analytics",
         ANALYTICSHIDE = "Analytics off",
         intervalRunning = false,
-        analyticsDisplayed = false,
         waitForMove = 150,
         updateInterval = 5000; // in ms
+    var isOpen = false;
     
     /**
      * @memberOf Opencast.Analytics
@@ -36,7 +36,7 @@ Opencast.Analytics = (function ()
      */
     function isVisible()
     {
-        return analyticsDisplayed;
+        return isOpen;
     }
     
     /**
@@ -48,39 +48,39 @@ Opencast.Analytics = (function ()
     {
 	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Analytics);
 	$.log("Opencast.Analytics registered: " + reg);
-
+	
         // Request JSONP data
         $.ajax(
-        {
-            type: 'GET',
-            contentType: 'text/xml',
-            url: Opencast.Watch.getAnalyticsURL(),
-            data: "id=" + mediaPackageId,
-            dataType: 'xml',
-            success: function (xml)
-            {
-                $.log("Analytics AJAX call: Requesting data succeeded");
-                var tmpData = $(xml).find('footprint');
-                if (tmpData !== undefined)
-                {
-                    // Display the controls
-                    $('#oc_checkbox-statistics').show();
-                    $('#oc_label-statistics').show();
-                    $('#oc_video-view').show();
-                }
-                else
-                {
-                    displayNoAnalyticsAvailable("No data defined (1), initialize");
-                }
-            },
-            // If no data comes back
-            error: function (xhr, ajaxOptions, thrownError)
-            {
-                $.log("Analytics Ajax call: Requesting data failed");
-                Opencast.Player.addEvent(Opencast.logging.ANALYTICS_INIT_AJAX_FAILED);
-                displayNoAnalyticsAvailable("No data available (1), initialize");
-            }
-        });
+	    {
+		type: 'GET',
+		contentType: 'text/xml',
+		url: Opencast.Watch.getAnalyticsURL(),
+		data: "id=" + mediaPackageId,
+		dataType: 'xml',
+		success: function (xml)
+		{
+		    $.log("Analytics AJAX call: Requesting data succeeded");
+		    var tmpData = $(xml).find('footprint');
+		    if (tmpData !== undefined)
+		    {
+			// Display the controls
+			$('#oc_checkbox-statistics').show();
+			$('#oc_label-statistics').show();
+			$('#oc_video-view').show();
+                    }
+                    else
+                    {
+			displayNoAnalyticsAvailable("No data defined (1), initialize");
+                    }
+		},
+		// If no data comes back
+		error: function (xhr, ajaxOptions, thrownError)
+		{
+                    $.log("Analytics Ajax call: Requesting data failed");
+                    Opencast.Player.addEvent(Opencast.logging.ANALYTICS_INIT_AJAX_FAILED);
+                    displayNoAnalyticsAvailable("No data available (1), initialize");
+		}
+            });
     }
     
     /**
@@ -92,102 +92,104 @@ Opencast.Analytics = (function ()
     {
         if (resized && isVisible())
         {
-            var rez = Opencast.AnalyticsPlugin.resizePlugin();
-            if (rez)
-            {
+	    var rez = Opencast.AnalyticsPlugin.resizePlugin();
+	    if (rez)
+	    {
                 return;
-            }
+	    }
         }
         // Request JSONP data
         $.ajax(
-        {
-            type: 'GET',
-            contentType: 'text/xml',
-            url: Opencast.Watch.getAnalyticsURL(),
-            data: "id=" + mediaPackageId,
-            dataType: 'xml',
-            success: function (xml)
-            {
-                $.log("Analytics AJAX call: Requesting data succeeded");
-                var position = 0;
-                var views;
-                var lastPosition = -1;
-                var lastViews;
-                // Check if duration is an Integer
-                if (!isNaN(duration) && (typeof(duration) == 'number') && (duration.toString().indexOf('.') == -1))
-                {
-                    var footprintData = new Array(duration);
-                    for (var i = 0; i < footprintData.length; i++)
-                    footprintData[i] = 0;
-                    $(xml).find('footprint').each(function ()
-                    {
-                        position = parseInt($(this).find('position').text());
-                        views = parseInt($(this).find('views').text());
-                        if (position - 1 != lastPosition)
-                        {
-                            for (var j = lastPosition + 1; j < position; j++)
-                            {
-                                footprintData[j] = lastViews;
-                            }
-                        }
-                        footprintData[position] = views;
-                        lastPosition = position;
-                        lastViews = views;
-                    });
-                    var plugAn = Opencast.AnalyticsPlugin.addAsPlugin($('#analytics'), footprintData);
-                    if (plugAn)
-                    {
-                        if (Opencast.segments.getSlideLength() > 0)
-                        {
-                            if ($.browser.webkit || $.browser.msie)
-                            {
-                                $(".segments").css('top', '-25px');
-                                $('#oc_video-view').css('top', '-22px');
-                            }
-                            else
-                            {
-                                $(".segments").css('top', '-25px');
-                                $('#oc_video-view').css('top', '-21px');
-                            }
-                            $('#segmentstable1').css('opacity', '0.65');
-                            $('#segmentstable1').css('filter', 'alpha(opacity=65)');
-                            $('#oc_video-view').css('position', 'relative');
-                        }
-                        $('#annotation').css('top', '-25px');
-                        $("#analytics").show();
-                        //$.sparkline_display_visible();
-                        analyticsDisplayed = true;
-                        if (!intervalRunning)
-                        {
-                            // Display actual Results every updateIntervall Milliseconds
-                            interval = setInterval(function ()
-                            {
-                                show(false);
-                            }, updateInterval);
-                            intervalRunning = true;
-                            show(false);
-                        }
-                    }
-                    else
-                    {
-                        displayNoAnalyticsAvailable("No template available (1)");
-                    }
-                }
-                else
-                {
-                    displayNoAnalyticsAvailable("No data defined (1)");
-                }
-            },
-            // If no data comes back
-            error: function (xhr, ajaxOptions, thrownError)
-            {
-                $.log("Analytics Ajax call: Requesting data failed");
-                Opencast.Player.addEvent(Opencast.logging.ANALYTICS_DATA_AJAX_FAILED);
-                displayNoAnalyticsAvailable("No data available (1)");
-            }
-        });
+	    {
+		type: 'GET',
+		contentType: 'text/xml',
+		url: Opencast.Watch.getAnalyticsURL(),
+		data: "id=" + mediaPackageId,
+		dataType: 'xml',
+		success: function (xml)
+		{
+		    $.log("Analytics AJAX call: Requesting data succeeded");
+		    var position = 0;
+		    var views;
+		    var lastPosition = -1;
+		    var lastViews;
+		    // Check if duration is an Integer
+		    if (!isNaN(duration) && (typeof(duration) == 'number') && (duration.toString().indexOf('.') == -1))
+		    {
+			var footprintData = new Array(duration);
+			for (var i = 0; i < footprintData.length; i++)
+			{
+			    footprintData[i] = 0;
+			}
+			$(xml).find('footprint').each(function ()
+						      {
+							  position = parseInt($(this).find('position').text());
+							  views = parseInt($(this).find('views').text());
+							  if (position - 1 != lastPosition)
+							  {
+							      for (var j = lastPosition + 1; j < position; j++)
+							      {
+								  footprintData[j] = lastViews;
+							      }
+							  }
+							  footprintData[position] = views;
+							  lastPosition = position;
+							  lastViews = views;
+						      });
+			var plugAn = Opencast.AnalyticsPlugin.addAsPlugin($('#analytics'), footprintData);
+			if (plugAn)
+			{
+			    if (Opencast.segments.getSlideLength() > 0)
+			    {
+				if ($.browser.webkit || $.browser.msie)
+				{
+				    $(".segments").css('top', '-25px');
+				    $('#oc_video-view').css('top', '-22px');
+				}
+				else
+				{
+				    $(".segments").css('top', '-25px');
+				    $('#oc_video-view').css('top', '-21px');
+				}
+				$('#segmentstable1').css('opacity', '0.65');
+				$('#segmentstable1').css('filter', 'alpha(opacity=65)');
+				$('#oc_video-view').css('position', 'relative');
+			    }
+			    $('#annotation').css('top', '-25px');
+			    $("#analytics").show();
+			    isOpen = true;
+			    //$.sparkline_display_visible();
+			    if (!intervalRunning)
+			    {
+				// Display actual Results every updateIntervall Milliseconds
+				interval = setInterval(function ()
+						       {
+							   show(false);
+						       }, updateInterval);
+				intervalRunning = true;
+				show(false);
+			    }
+			}
+			else
+			{
+			    displayNoAnalyticsAvailable("No template available (1)");
+			}
+		    }
+		    else
+		    {
+			displayNoAnalyticsAvailable("No data defined (1)");
+		    }
+		},
+		// If no data comes back
+		error: function (xhr, ajaxOptions, thrownError)
+		{
+		    $.log("Analytics Ajax call: Requesting data failed");
+		    Opencast.Player.addEvent(Opencast.logging.ANALYTICS_DATA_AJAX_FAILED);
+		    displayNoAnalyticsAvailable("No data available (1)");
+		}
+	    });
     }
-    
+		      
     /**
      * @memberOf Opencast.Analytics
      * @description Displays that no Analytics is available and hides Annotations
@@ -196,7 +198,7 @@ Opencast.Analytics = (function ()
     function displayNoAnalyticsAvailable(errorDesc)
     {
         errorDesc = errorDesc || '';
-        var optError = (errorDesc != '') ? (": " + errorDesc) : '';
+	var optError = (errorDesc != '') ? (": " + errorDesc) : '';
         $("#analytics").html("No analytics available" + optError);
         $('#oc_checkbox-statistics').removeAttr("checked");
         $('#oc_checkbox-statistics').attr('disabled', true);
@@ -214,7 +216,7 @@ Opencast.Analytics = (function ()
         resizeEndTimeoutRunning = false;
         $(window).resize(function ()
         {
-            if(analyticsDisplayed)
+            if(isOpen)
             {
                 dateIn = new Date();
                 if (resizeEndTimeoutRunning === false)
@@ -251,18 +253,21 @@ Opencast.Analytics = (function ()
      */
     function hide()
     {
-        analyticsDisplayed = false;
-        if (intervalRunning)
-        {
-            // Clear Update-Intervall
-            clearInterval(interval);
-            intervalRunning = false;
-        }
-        $("#analytics").css('display', 'none');
-        $(".segments").css('top', '0');
-        $('#oc_video-view').css('top', 'auto');
-        $("#annotation_holder").css('top', '0');
-        $('#annotation_holder').css('float', 'left');
+	if(isOpen)
+	{
+            if (intervalRunning)
+            {
+		// Clear Update-Intervall
+		clearInterval(interval);
+		intervalRunning = false;
+            }
+            $("#analytics").css('display', 'none');
+            $(".segments").css('top', '0');
+            $('#oc_video-view').css('top', 'auto');
+            $("#annotation_holder").css('top', '0');
+            $('#annotation_holder').css('float', 'left');
+	    isOpen = false;
+	}
     }
     
     /**
@@ -271,7 +276,7 @@ Opencast.Analytics = (function ()
      */
     function doToggle()
     {
-        if (!analyticsDisplayed)
+        if (!isOpen)
         {
             initResizeEnd();
             show(false);

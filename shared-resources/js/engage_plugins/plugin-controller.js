@@ -130,7 +130,7 @@ Opencast.Plugin_Controller =
 	     {
 		 if(pluginToExclude && (plugins[i] != pluginToExclude))
 		 {
-		     hide(plugin[i]);
+		     hide(plugins[i]);
 		 }
 	     }
 	 }
