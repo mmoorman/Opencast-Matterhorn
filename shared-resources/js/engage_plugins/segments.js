@@ -146,6 +146,9 @@ Opencast.segments = (function ()
      */
     function initialize()
     {
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.segments);
+	$.log("Opencast.segments registered: " + reg);
+
         totalPanels = $(".scrollContainer").children().size();
         var $panels = $('#slider .scrollContainer > div');
         var $container = $('#slider .scrollContainer');
@@ -202,7 +205,7 @@ Opencast.segments = (function ()
         // Hide Slide Tab, if there are no slides
         if (numberOfSegments == 0)
         {
-            hideSegments();
+            hide();
             $(".oc_btn-skip-backward").hide();
             $(".oc_btn-skip-forward").hide();
             // Disable and grey out "Segments" and "Segments Text" Tab
@@ -368,14 +371,11 @@ Opencast.segments = (function ()
      * @memberOf Opencast.segments
      * @description Displays the Segments Tab
      */
-    function showSegments()
+    function show()
     {
         Opencast.Player.addEvent(Opencast.logging.SHOW_SEGMENTS);
         // Hide other Tabs
-        Opencast.Annotation_Comment_List.hideComments();
-        Opencast.Description.hideDescription();
-        Opencast.segments_text.hideSegmentsText();
-        Opencast.search.hideSearch();
+	Opencast.Plugin_Controller.hideAll();
         // Change Tab Caption
         $('#oc_btn-slides').attr(
         {
@@ -482,7 +482,7 @@ Opencast.segments = (function ()
      * @memberOf Opencast.segments
      * @description Hides the Segments Tab
      */
-    function hideSegments()
+    function hide()
     {
         // Change Tab Caption
         $('#oc_btn-slides').attr(
@@ -498,19 +498,16 @@ Opencast.segments = (function ()
      * @memberOf Opencast.segments
      * @description Toggles the Segments Tab
      */
-    function doToggleSlides()
+    function doToggle()
     {
         if ($('#oc_btn-slides').attr("title") === SEGMENTS)
         {
-        	Opencast.Annotation_Comment_List.hideComments();
-            Opencast.Description.hideDescription();
-            Opencast.segments_text.hideSegmentsText();
-            Opencast.search.hideSearch();
-            showSegments();
+	    Opencast.Plugin_Controller.hideAll();
+            show();
         }
         else
         {
-            hideSegments();
+            hide();
         }
     }
     
@@ -535,9 +532,9 @@ Opencast.segments = (function ()
         clearCashe: clearCashe,
         initialize: initialize,
         sizeSliderContainer: sizeSliderContainer,
-        showSegments: showSegments,
-        hideSegments: hideSegments,
+        show: show,
+        hide: hide,
         setMediaPackageId: setMediaPackageId,
-        doToggleSlides: doToggleSlides
+        doToggle: doToggle
     };
 }());

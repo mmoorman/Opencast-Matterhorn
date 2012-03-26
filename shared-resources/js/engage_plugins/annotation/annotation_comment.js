@@ -183,7 +183,9 @@ Opencast.Annotation_Comment = (function ()
 
     function initialize()
     {
-    	
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Annotation_Comment);
+	$.log("Opencast.Annotation_Comment registered: " + reg);
+
     	$("Comment Plugin init");
     	
     	if(modus === "public"){
@@ -466,7 +468,7 @@ Opencast.Annotation_Comment = (function ()
         	//Check weather comments are on the current slide 
             if(Opencast.segments.getCurrentSlideId() !== oldSlideId){
                 if(annotationCommentDisplayed){
-                    showAnnotation_Comment();
+                    show();
                     //exit shown infos
         			$(".oc-comment-exit").click();
                 }                   
@@ -490,7 +492,7 @@ Opencast.Annotation_Comment = (function ()
         	//Check wether comments on the current slide 
              if(Opencast.segments.getCurrentSlideId() !== oldSlideId){
                 if(annotationCommentDisplayed){
-                    showAnnotation_Comment();
+                    show();
                     //exit shown infos
         			$(".oc-comment-exit").click();                    
                 }                   
@@ -666,7 +668,7 @@ Opencast.Annotation_Comment = (function ()
                 //erase cache
                 comments_cache = undefined;
                 //show new comments
-                showAnnotation_Comment();
+                show();
                 //check checkbox
                 $('#oc_checkbox-annotation-comment').attr('checked', true);
                 
@@ -685,7 +687,7 @@ Opencast.Annotation_Comment = (function ()
      * @memberOf Opencast.Annotation_Comment
      * @description Show Annotation_Comment
      */
-    function showAnnotation_Comment()
+    function show()
     {
         annotationCommentDisplayed = true;
         // Request JSONP data
@@ -1163,7 +1165,7 @@ Opencast.Annotation_Comment = (function ()
      * @memberOf Opencast.Annotation_Comment
      * @description Hide the Annotation
      */
-    function hideAnnotation_Comment()
+    function hide()
     {
     	//remove segment marks
     	$('div[id^="oc-comment-segmark_"]').remove();
@@ -1180,11 +1182,11 @@ Opencast.Annotation_Comment = (function ()
     {
         if (!annotationCommentDisplayed)
         {
-            showAnnotation_Comment();
+            show();
         }
         else
         {
-            hideAnnotation_Comment();
+            hide();
         }
         return true;
     }
@@ -1222,8 +1224,8 @@ Opencast.Annotation_Comment = (function ()
     
     return {
         initialize: initialize,
-        hideAnnotation_Comment: hideAnnotation_Comment,
-        showAnnotation_Comment: showAnnotation_Comment,
+        hide: hide,
+        show: show,
         getAnnotationCommentDisplayed: getAnnotationCommentDisplayed,
         setUsername: setUsername,
         getUsername: getUsername,

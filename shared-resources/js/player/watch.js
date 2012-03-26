@@ -354,6 +354,7 @@ Opencast.Watch = (function ()
             // set the title of the page
             document.title = $('#oc-title').html() + " | Opencast Matterhorn - Media Player";
             var dcExtent = parseInt($('#dc-extent').html());
+            Opencast.Description.initialize();
             Opencast.Analytics.setDuration(parseInt(parseInt(dcExtent) / 1000));
             Opencast.Analytics.initialize();
             Opencast.Annotation_Chapter.setDuration(parseInt(parseInt(dcExtent) / 1000));

@@ -32,21 +32,19 @@ Opencast.segments_text = (function ()
      */
     function initialize()
     {
-        // Do nothing in here
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.segments_text);
+	$.log("Opencast.segments_text registered: " + reg);
     }
     
     /**
      * @memberOf Opencast.segments_text
      * @description Shows the Segments Text Tab
      */
-    function showSegmentsText()
+    function show()
     {
         Opencast.Player.addEvent(Opencast.logging.SHOW_TEXT_SEGMENTS);
         // Hide other Tabs
-        Opencast.Annotation_Comment_List.hideComments();
-        Opencast.Description.hideDescription();
-        Opencast.segments.hideSegments();
-        Opencast.search.hideSearch();
+	Opencast.Plugin_Controller.hideAll();
         // Change Tab Caption
         $('#oc_btn-slidetext').attr(
         {
@@ -124,7 +122,7 @@ Opencast.segments_text = (function ()
      * @memberOf Opencast.segments_text
      * @description Hides the Segments Text Tab
      */
-    function hideSegmentsText()
+    function hide()
     {
         // Change Tab Caption
         $('#oc_btn-slidetext').attr(
@@ -140,18 +138,16 @@ Opencast.segments_text = (function ()
      * @memberOf Opencast.segments_text
      * @description Toggles the Segments Text Tab
      */
-    function doToggleSegmentsText()
+    function doToggle()
     {
         if ($('#oc_btn-slidetext').attr("title") === SEGMENTS_TEXT)
         {
-        	Opencast.Annotation_Comment_List.hideComments();
-            Opencast.Description.hideDescription();
-            Opencast.segments.hideSegments();
-            showSegmentsText();
+	    Opencast.Plugin_Controller.hideAll();
+            show();
         }
         else if (staticBool_hide)
         {
-            hideSegmentsText();
+            hide();
         }
     }
     
@@ -167,9 +163,9 @@ Opencast.segments_text = (function ()
     
     return {
         initialize: initialize,
-        showSegmentsText: showSegmentsText,
-        hideSegmentsText: hideSegmentsText,
+        show: show,
+        hide: hide,
         setMediaPackageId: setMediaPackageId,
-        doToggleSegmentsText: doToggleSegmentsText
+        doToggle: doToggle
     };
 }());

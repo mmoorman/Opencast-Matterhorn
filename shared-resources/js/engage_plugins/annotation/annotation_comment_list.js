@@ -55,6 +55,8 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function initialize()
     {
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Annotation_Comment_List);
+	$.log("Opencast.Annotation_Comment_List registered: " + reg);
 
         $.log("Comment List Plugin init");
         
@@ -197,13 +199,13 @@ Opencast.Annotation_Comment_List = (function ()
             success: function (xml)
             {
                 $.log("Add_Comment success");
-                showComments(); //show list
+                show(); //show list
                 //show scrubber comments if a scrubber comment was added
                 if(type === "scrubber"){
                 	if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === false){
             			$("#oc_checkbox-annotation-comment").attr('checked', true);
         			}
-        			Opencast.Annotation_Comment.showAnnotation_Comment();
+        			Opencast.Annotation_Comment.show();
                 }                           
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -217,14 +219,11 @@ Opencast.Annotation_Comment_List = (function ()
      @memberOf Opencast.Annotation_Comment_List
      @description Show the Annotation_Comment_List
      */
-    function showComments()
+    function show()
     {
         $.log("show commment list");
         // Hide other Tabs
-        Opencast.Description.hideDescription();
-        Opencast.segments.hideSegments();
-        Opencast.segments_text.hideSegmentsText();
-        Opencast.search.hideSearch();
+	Opencast.Plugin_Controller.hideAll();
         // Change Tab Caption
         $('#oc_btn-comments-tab').attr(
         {
@@ -409,7 +408,7 @@ Opencast.Annotation_Comment_List = (function ()
      @memberOf Opencast.Annotation_Comment_List
      @description Hide the Annotation_Comment_List
      */
-    function hideComments()
+    function hide()
     {
         $.log("hide commment list");
         // Change Tab Caption
@@ -427,17 +426,17 @@ Opencast.Annotation_Comment_List = (function ()
      @memberOf Opencast.Annotation_Comment_List
      @description Toggle the Annotation_Comment_List
      */
-    function doToggleComments()
+    function doToggle()
     {        
         
         $.log("toggle commment list");
         if (comment_list_show === false)
         {
-            showComments();
+            show();
         }
         else
         {
-            hideComments();
+            hide();
         }
     }
 
@@ -474,18 +473,18 @@ Opencast.Annotation_Comment_List = (function ()
             statusCode: {
                 200: function() {
                     $.log("Comment DELETE Ajax call: Request success");
-                    showComments();
+                    show();
                     if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === true){
-                        Opencast.Annotation_Comment.showAnnotation_Comment();
+                        Opencast.Annotation_Comment.show();
                     }
                 }
             },
             complete:
                 function(jqXHR, textStatus){
                     $.log("Comment DELETE Ajax call: Request success");
-                    showComments();
+                    show();
                     if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === true){
-                        Opencast.Annotation_Comment.showAnnotation_Comment();
+                        Opencast.Annotation_Comment.show();
                     }
                 }
             
@@ -501,7 +500,7 @@ Opencast.Annotation_Comment_List = (function ()
     {
         if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === false){
             $("#oc_checkbox-annotation-comment").attr('checked', true);
-            Opencast.Annotation_Comment.showAnnotation_Comment();
+            Opencast.Annotation_Comment.show();
         }
         
         //click on comment
@@ -606,8 +605,8 @@ Opencast.Annotation_Comment_List = (function ()
     
     return {
         initialize: initialize,
-        showComments: showComments,
-        hideComments: hideComments,
+        show: show,
+        hide: hide,
         refreshUIUsername: refreshUIUsername,
         clickCommentList: clickCommentList,
         deleteComment: deleteComment,
@@ -615,7 +614,7 @@ Opencast.Annotation_Comment_List = (function ()
         cancelReply: cancelReply,
         hoverOutCommentList: hoverOutCommentList,
         goToComment: goToComment,
-        doToggleComments: doToggleComments,
+        doToggle: doToggle,
         setMediaPackageId: setMediaPackageId
     };
 }());

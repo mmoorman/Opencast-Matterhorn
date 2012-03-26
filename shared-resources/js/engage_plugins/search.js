@@ -74,7 +74,8 @@ Opencast.search = (function ()
      */
     function initialize()
     {
-        // Do nothing in here
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.search);
+	$.log("Opencast.search registered: " + reg);
     }
     
     /**
@@ -226,9 +227,7 @@ Opencast.search = (function ()
             $(staticInputElem).val('');
         }
         // Hide other Tabs
-        Opencast.Description.hideDescription();
-        Opencast.segments.hideSegments();
-        Opencast.segments_text.hideSegmentsText();
+	Opencast.Plugin_Controller.hideAll();
         $("#oc_btn-lecturer-search").attr('aria-pressed', 'true');
         // Show a loading Image
         $('#oc_search-segment').show();
@@ -375,7 +374,7 @@ Opencast.search = (function ()
      * @memberOf Opencast.search
      * @description Hides the whole Search
      */
-    function hideSearch()
+    function hide()
     {
         searchOpen = false;
         $("#oc_btn-lecturer-search").attr('aria-pressed', 'false');
@@ -414,7 +413,7 @@ Opencast.search = (function ()
         getCurrentInputElement: getCurrentInputElement,
         getCurrentSearchString: getCurrentSearchString,
         showResult: showResult,
-        hideSearch: hideSearch,
+        hide: hide,
         isOpen: isOpen,
         setMediaPackageId: setMediaPackageId
     };

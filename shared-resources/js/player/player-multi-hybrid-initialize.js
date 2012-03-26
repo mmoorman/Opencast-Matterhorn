@@ -787,16 +787,16 @@ Opencast.Initialize = (function ()
                 switch (ui.index)
                 {
                 case 0:
-                    Opencast.Description.doToggleDescription();
+                    Opencast.Description.doToggle();
                     break;
                 case 1:
-                    Opencast.segments.doToggleSlides();
+                    Opencast.segments.doToggle();
                     break;
                 case 2:
-                    Opencast.segments_text.doToggleSegmentsText();
+                    Opencast.segments_text.doToggle();
                     break;
                 case 3:
-                    Opencast.Annotation_Comment_List.doToggleComments();
+                    Opencast.Annotation_Comment_List.doToggle();
                     break;
                 case 4:
                     // Have a look at the - (engage-ui) watch.html - search trigger-function
@@ -829,15 +829,15 @@ Opencast.Initialize = (function ()
         });
         $('#oc_checkbox-statistics').click(function ()
         {
-            Opencast.Analytics.doToggleAnalytics();
+            Opencast.Analytics.doToggle();
         });
         $('#oc_checkbox-annotations').click(function ()
         {
-            Opencast.Annotation_Chapter.doToggleAnnotation_Chapter();
+            Opencast.Annotation_Chapter.doToggle();
         });
         $('#oc_checkbox-annotation-comment').click(function ()
         {
-            Opencast.Annotation_Comment.doToggleAnnotation_Comment();
+            Opencast.Annotation_Comment.doToggle();
         });
         //bind click events to show dialog
         $('#oc_shortcuts').dialog(

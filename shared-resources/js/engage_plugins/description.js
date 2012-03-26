@@ -25,19 +25,22 @@ Opencast.Description = (function ()
     var DESCRIPTION = "Description",
         DESCRIPTION_HIDE = "Hide Description";
     var defaultChar = '-';
+
+    function initialize()
+    {
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Description);
+	$.log("Opencast.Description registered: " + reg);
+    }
     
     /**
      * @memberOf Opencast.Description
      * @description Displays the Description Tab
      */
-    function showDescription()
+    function show()
     {
         Opencast.Player.addEvent(Opencast.logging.SHOW_DESCRIPTION);
         // Hide other Tabs
-        Opencast.Annotation_Comment_List.hideComments();
-        Opencast.segments.hideSegments();
-        Opencast.segments_text.hideSegmentsText();
-        Opencast.search.hideSearch();
+	Opencast.Plugin_Controller.hideAll();
         // Change Tab Caption
         $('#oc_btn-description').attr(
         {
@@ -173,7 +176,7 @@ Opencast.Description = (function ()
      * @memberOf Opencast.Description
      * @description Hides the Description Tab
      */
-    function hideDescription()
+    function hide()
     {
         // Change Tab Caption
         $('#oc_btn-description').attr(
@@ -189,19 +192,16 @@ Opencast.Description = (function ()
      * @memberOf Opencast.Description
      * @description Toggles the Description Tab
      */
-    function doToggleDescription()
+    function doToggle()
     {
         if ($('#oc_btn-description').attr("title") === DESCRIPTION)
         {
-        	Opencast.Annotation_Comment_List.hideComments();
-            Opencast.segments.hideSegments();
-            Opencast.segments_text.hideSegmentsText();
-            Opencast.search.hideSearch();
-            showDescription();
+	    Opencast.Plugin_Controller.hideAll();
+            show();
         }
         else
         {
-            hideDescription();
+            hide();
         }
     }
     
@@ -216,9 +216,10 @@ Opencast.Description = (function ()
     }
     
     return {
-        showDescription: showDescription,
-        hideDescription: hideDescription,
+        show: show,
+        hide: hide,
+        initialize: initialize,
         setMediaPackageId: setMediaPackageId,
-        doToggleDescription: doToggleDescription
+        doToggle: doToggle
     };
 }());

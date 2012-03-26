@@ -46,6 +46,9 @@ Opencast.Analytics = (function ()
      */
     function initialize()
     {
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Analytics);
+	$.log("Opencast.Analytics registered: " + reg);
+
         // Request JSONP data
         $.ajax(
         {
@@ -85,7 +88,7 @@ Opencast.Analytics = (function ()
      * @description Show Analytics
      * @param resized if resized (== used cashed footprint) or not (== request new data))
      */
-    function showAnalytics(resized)
+    function show(resized)
     {
         if (resized && isVisible())
         {
@@ -159,10 +162,10 @@ Opencast.Analytics = (function ()
                             // Display actual Results every updateIntervall Milliseconds
                             interval = setInterval(function ()
                             {
-                                showAnalytics(false);
+                                show(false);
                             }, updateInterval);
                             intervalRunning = true;
-                            showAnalytics(false);
+                            show(false);
                         }
                     }
                     else
@@ -199,7 +202,7 @@ Opencast.Analytics = (function ()
         $('#oc_checkbox-statistics').attr('disabled', true);
         $('#oc_checkbox-statistics').hide();
         $('#oc_label-statistics').hide();
-        hideAnalytics();
+        hide();
     }
     
     /**
@@ -238,7 +241,7 @@ Opencast.Analytics = (function ()
         {
             // else: repaint Statistics div
             resizeEndTimeoutRunning = false;
-            showAnalytics(true);
+            show(true);
         }
     }
     
@@ -246,7 +249,7 @@ Opencast.Analytics = (function ()
      * @memberOf Opencast.Analytics
      * @description Hide the notes
      */
-    function hideAnalytics()
+    function hide()
     {
         analyticsDisplayed = false;
         if (intervalRunning)
@@ -266,19 +269,19 @@ Opencast.Analytics = (function ()
      * @memberOf Opencast.Analytics
      * @description Toggle Analytics
      */
-    function doToggleAnalytics()
+    function doToggle()
     {
         if (!analyticsDisplayed)
         {
             initResizeEnd();
-            showAnalytics(false);
+            show(false);
             //This is done here so that we don't get a million events when the
             //analytics components get resized
             Opencast.Player.addEvent(Opencast.logging.SHOW_ANALYTICS);
         }
         else
         {
-            hideAnalytics();
+            hide();
         }
     }
     
@@ -305,10 +308,10 @@ Opencast.Analytics = (function ()
     return {
         initialize: initialize,
         isVisible: isVisible,
-        hideAnalytics: hideAnalytics,
-        showAnalytics: showAnalytics,
+        hide: hide,
+        show: show,
         setDuration: setDuration,
         setMediaPackageId: setMediaPackageId,
-        doToggleAnalytics: doToggleAnalytics
+        doToggle: doToggle
     };
 }());
