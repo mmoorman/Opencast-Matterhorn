@@ -174,6 +174,7 @@ Opencast.Annotation_Comment = (function ()
     var comments_cache;
     var time_offset = 3;
     var reply_map;
+    var modus = "private";
     
     /**
      * @memberOf Opencast.Annotation_Comment
@@ -185,17 +186,28 @@ Opencast.Annotation_Comment = (function ()
     	
     	$("Comment Plugin init");
     	
-    	//Read Cookie for default Name
-		cm_username = default_name;
-		var nameEQ = cookieName + "=";
-		var ca = document.cookie.split(';');
-		for(var i = 0; i < ca.length; i++) {
-			var c = ca[i];
-			while(c.charAt(0) == ' ')
-			c = c.substring(1, c.length);
-			if(c.indexOf(nameEQ) == 0)
-				cm_username = c.substring(nameEQ.length, c.length);
+    	if(modus === "public"){
+        	//Read Cookie for default Name
+    		cm_username = default_name;
+    		var nameEQ = cookieName + "=";
+    		var ca = document.cookie.split(';');
+    		for(var i = 0; i < ca.length; i++) {
+    			var c = ca[i];
+    			while(c.charAt(0) == ' ')
+    			c = c.substring(1, c.length);
+    			if(c.indexOf(nameEQ) == 0)
+    				cm_username = c.substring(nameEQ.length, c.length);
+    		}
+		}else if(modus === "private"){
+		    //set username
+		    loggedUser();
+		    //disable username input
+		}else{
+		    //TODO: error deactivate plugin
 		}
+		//if user logged in use his username
+		
+		
 		
 		$.log("Comment Plugin set username to: "+cm_username);
     	
@@ -246,14 +258,26 @@ Opencast.Annotation_Comment = (function ()
 			$("#oc-comment-info-header-text").html("Comments at "+curTime);
 			
 			//process comment input form
-			$("#oc-comment-info-value-wrapper").html(
-	            '<div id="oc-comment-info-header-1" class="oc-comment-info-cm-header">'+
-	            	'<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+       	
-	            	'<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="Your name">'+
-	            	'<div id="oc-comment-info-header-text-1" class="oc-comment-info-header-text"> at '+curTime+'</div>'+
-	            '</div>'+
-            	'<textarea id="oc-comment-add-textbox" class="oc-comment-textbox">Type Your Comment Here</textarea>'			
-			);
+			if(modus === "private"){
+                $("#oc-comment-info-value-wrapper").html(
+                    '<div id="oc-comment-info-header-1" class="oc-comment-info-cm-header">'+
+                        '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+           
+                        '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'" disabled="disabled">'+
+                        '<div id="oc-comment-info-header-text-1" class="oc-comment-info-header-text"> at '+curTime+'</div>'+
+                    '</div>'+
+                    '<textarea id="oc-comment-add-textbox" class="oc-comment-textbox">Type Your Comment Here</textarea>'            
+                );			    
+			}else if(modus === "public"){
+                $("#oc-comment-info-value-wrapper").html(
+                    '<div id="oc-comment-info-header-1" class="oc-comment-info-cm-header">'+
+                        '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+           
+                        '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'">'+
+                        '<div id="oc-comment-info-header-text-1" class="oc-comment-info-header-text"> at '+curTime+'</div>'+
+                    '</div>'+
+                    '<textarea id="oc-comment-add-textbox" class="oc-comment-textbox">Type Your Comment Here</textarea>'            
+                );			    
+			}
+
 			//submit comment btn click handler
 			$("#oc-comment-add-submit").click(function(){
 				submitCommentHandler();
@@ -498,7 +522,32 @@ Opencast.Annotation_Comment = (function ()
         //$("#oc_ui_tabs").tabs('enable', 3);             // comment tab
 
     }
-        
+
+    /**
+     * @memberOf Opencast.Annotation_Comment
+     * @description handler for submit btn
+     */
+     function loggedUser(){
+        $.ajax(
+        {
+            url: "../../info/me.json",
+            data: "",
+            dataType: 'json',
+            jsonp: 'jsonp',
+            success: function (data)
+            {
+                if ((data !== undefined) || (data['username'] !== undefined))
+                {   
+                     if(data.username === "anonymous"){
+                         //TODO: what is to do if user not logged in, example: deactivate feature
+                     }else{
+                         cm_username = data.username;
+                     }
+                }  
+            }
+        });     
+     
+     }
     /**
      * @memberOf Opencast.Annotation_Comment
      * @description handler for submit btn
@@ -886,15 +935,28 @@ Opencast.Annotation_Comment = (function ()
     function replyComment(commentId)
     {
 		//process comment input form
-		$("#oc-comment-cm-textbox-"+commentId).after(
-			'<div id="oc-comment-reply-form" style="display:none;"'+
-            	'<div id="oc-comment-info-header-reply" class="oc-comment-info-reply-header">'+
-            		'<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+       	
-            		'<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="Your name">'+
-            	'</div>'+
-        		'<textarea id="oc-comment-add-reply-textbox" class="oc-comment-textbox">Type Your Comment Here</textarea>'+
-        	'</div>'			
-		);
+		if(modus === "private"){
+            $("#oc-comment-cm-textbox-"+commentId).after(
+                '<div id="oc-comment-reply-form" style="display:none;"'+
+                    '<div id="oc-comment-info-header-reply" class="oc-comment-info-reply-header">'+
+                        '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button"  />'+           
+                        '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'" disabled="disabled">'+
+                    '</div>'+
+                    '<textarea id="oc-comment-add-reply-textbox" class="oc-comment-textbox">Type Your Comment Here</textarea>'+
+                '</div>'            
+            );		    
+		}else if(modus === "public"){
+            $("#oc-comment-cm-textbox-"+commentId).after(
+                '<div id="oc-comment-reply-form" style="display:none;"'+
+                    '<div id="oc-comment-info-header-reply" class="oc-comment-info-reply-header">'+
+                        '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+           
+                        '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'">'+
+                    '</div>'+
+                    '<textarea id="oc-comment-add-reply-textbox" class="oc-comment-textbox">Type Your Comment Here</textarea>'+
+                '</div>'            
+            );		    
+		}
+
 		$("#oc-comment-reply-form").slideDown(500);
 		
 		//submit comment btn click handler
