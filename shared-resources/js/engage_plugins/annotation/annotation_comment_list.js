@@ -21,12 +21,13 @@ var Opencast = Opencast || {};
  */
 Opencast.Annotation_Comment_List = (function ()
 {
-    var COMMENTNOHIDE = "Comments",
-        COMMENTSHIDE = "Hide Comments";
-    var defaultText = "Type Your Comment Here";
-    var comment_list_show = false;
     var mediaPackageId;
-    var annotationType = "comment";
+    var COMMENTNOHIDE = "Comments",
+    COMMENTSHIDE = "Hide Comments",
+    defaultText = "Type Your Comment Here",
+    annotationType = "comment",
+    isOpening = false,
+    isOpen = false;
     
     var replyTemplate =  '<tr class="oc-comment-list-reply-row" id="comment-row-reply-form"  >' +
                             '<td class="oc-comment-list-border" style="cursor:pointer;cursor:hand;">' +
@@ -221,187 +222,189 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function show()
     {
-        $.log("show commment list");
-        // Hide other Tabs
-	Opencast.Plugin_Controller.hideAll();
-        // Change Tab Caption
-        $('#oc_btn-comments-tab').attr(
-        {
-            title: COMMENTSHIDE
-        });
-        comment_list_show = true;
-        $('#oc_btn-comments-tab').html(COMMENTSHIDE);
-        $("#oc_btn-comments-tab").attr('aria-pressed', 'true');
-        // Show a loading Image
-        $('#oc_comments-list-wrapper').show();
-        $('#oc_comments-list-loading').show();
-        $('#oc-comments-list-header').hide();
-        $('#oc-comments-list').hide();
-        $('#oc-comments-list-add-form').hide();
-        
-        // Request JSONP data
-        $.ajax(
-        {
-            url: Opencast.Watch.getAnnotationURL(),
-            data: "episode=" + mediaPackageId+"&type="+annotationType+"&limit=1000",
-            dataType: 'json',
-            jsonp: 'jsonp',
-            success: function (data)
-            {
-                $.log("Annotation AJAX call: Requesting data succeeded");
-                
-                var count = 0;
-                var slideCount = 0;
-                var scrubberCount = 0;
-                var normalCount = 0;
-                var replyCount = 0;
-                
-                if ((data === undefined) || (data['annotations'] === undefined) || (data['annotations'].annotation === undefined))
-                {
-                    $.log("Annotation AJAX call: Data not available");
-                    //show nothing
-                    $('#oc-comments-list').html("");
-                    //displayNoAnnotationsAvailable("No data defined");
-                }
-                else
-                {
-                    $.log("Annotation AJAX call: Data available");
-                    
-                    var commentData = new Object();                  
-                    var commentArray = new Array();
-                    var replyArray = new Array();
-                    
-                    $.log("Debug 1");
-                    if(data['annotations'].total > 1){
-
-                        $(data['annotations'].annotation).each(function (i)
-                        {
-                            //split data by <> [user]<>[text]<>[type]<>[xPos]<>[yPos]<>[segId]
-                            //OR split data by <> [user]<>[text]<>[type]<>[replyID]
-                            var dataArray = data['annotations'].annotation[i].value.split("<>");
-                            var comment = new Object();
-                            
-                            comment.id = data['annotations'].annotation[i].annotationId;
-                            comment.inpoint = data['annotations'].annotation[i].inpoint;
-                            var created = data['annotations'].annotation[i].created;         
-                            var dateCr = $.dateStringToDate(created);
-                            comment.created = $.getDateString(dateCr) + " " + $.getTimeString(dateCr);
-                            comment.user = dataArray[0];
-                            comment.text = dataArray[1];
-                            comment.type = dataArray[2];                            
-                            if(dataArray[2] === "slide"){
-                                comment.slide = dataArray[5];
-                                slideCount++;                                    
-                            }else if(dataArray[2] === "scrubber"){
-                                scrubberCount++;
-                            }else if(dataArray[2] === "normal"){
-                                normalCount++;
-                            }else if(dataArray[2] === "reply"){
-                            	comment.replyID = dataArray[3];
-                            }
-                            if(dataArray[2] !== "reply"){
-                            	commentArray[count] = comment;
-                            	count++; 
-                            }else{
-                            	replyArray[replyCount] = comment;
-                            	replyCount++;
-                            }                                            
-                        });
-                        //last comments on top
-                        commentArray.reverse();
-                        replyArray.reverse();                       
-                    }else if(data['annotations'].total !== 0){
-                            //split data by <> [user]<>[text]<>[type]<>[xPos]<>[yPos]<>[segId]
-                            //OR split data by <> [user]<>[text]<>[type]<>[replyID]
-                            var dataArray = data['annotations'].annotation.value.split("<>");
-                            var comment = new Object();
-                            comment.id = data['annotations'].annotation.annotationId;
-                            comment.inpoint = data['annotations'].annotation.inpoint;
-                            var created = data['annotations'].annotation.created;         
-                            var dateCr = $.dateStringToDate(created);
-                            comment.created = $.getDateString(dateCr) + " " + $.getTimeString(dateCr);
-                            comment.user = dataArray[0];
-                            comment.text = dataArray[1];
-                            comment.type = dataArray[2];                            
-                            if(dataArray[2] === "slide"){
-                                comment.slide = dataArray[5];
-                                slideCount++;                                    
-                            }else if(dataArray[2] === "scrubber"){
-                                scrubberCount++;
-                            }else if(dataArray[2] === "normal"){
-                                normalCount++;
-                            }else if(dataArray[2] === "reply"){
-                            	comment.replyID = dataArray[3];
-                            }
-                            if(dataArray[2] !== "reply"){
-                            	commentArray[0] = comment;
-                            	count++; 
-                            }else{
-                            	replyArray[0] = comment;
-                            	replyCount++;
-                            }    
-                    }
-                    
-                    commentData.comment = commentArray;
-                    commentData.replys = replyArray;
-                    
-                    $.log("commentList template process");
-                    // Create Trimpath Template
-                    var commentListSet = Opencast.Annotation_Comment_List_Plugin.addAsPlugin($('#oc-comments-list'), commentData);
-
-                    if (!commentListSet)
-                    {
-                        $.log("No commentList template processed");
-                    }        
-                }
-                
-                //process header
-                if(count === 1){
-                    $("#oc-comments-list-header-top").html(count+" Comment");
-                }else{
-                    $("#oc-comments-list-header-top").html(count+" Comments");
-                }
-                var line = "";
-                if(slideCount === 1){
-                    line += slideCount+ " slide comment, ";
-                }else{
-                    line += slideCount+ " slide comments, ";
-                }
-                if(scrubberCount === 1){
-                    line += scrubberCount+ " timed comment, ";
-                }else{
-                    line += scrubberCount+ " timed comments, ";
-                }
-                if(normalCount === 1){
-                    line += normalCount+ " regular comment and ";
-                }else{
-                    line += normalCount+ " regular comments and ";
-                }
-                
-                if(replyCount === 1){
-                    line += replyCount+ " reply";
-                }else{
-                    line += replyCount+ " replys";
-                }
-                $("#oc-comments-list-header-bottom").html(line);
-                
-                $('#oc_comments-list-loading').hide();
-                $('#oc-comments-list-header').show();
-                $('#oc-comments-list').show();
-                $('#oc-comments-list-add-form').show();
-                //scroll down
-                $(window).scrollTop( $('#oc_btn-comments-tab').offset().top - 10 );
-
-            },
-            // If no data comes back
-            error: function (xhr, ajaxOptions, thrownError)
-            {
-                $.log("Comment Ajax call: Requesting data failed "+xhr+" "+ ajaxOptions+" "+ thrownError);
-            }
-        });
-        
-        
-        
+	if(!isOpen && !isOpening)
+	{
+	    isOpening = true;
+            // Hide other Tabs
+	    Opencast.Plugin_Controller.hideAll(Opencast.Annotation_Comment_List);
+            // Change Tab Caption
+            $('#oc_btn-comments-tab').attr(
+		{
+		    title: COMMENTSHIDE
+		});
+            $('#oc_btn-comments-tab').html(COMMENTSHIDE);
+            $("#oc_btn-comments-tab").attr('aria-pressed', 'true');
+            // Show a loading Image
+            $('#oc_comments-list-wrapper').show();
+            $('#oc_comments-list-loading').show();
+            $('#oc-comments-list-header').hide();
+            $('#oc-comments-list').hide();
+            $('#oc-comments-list-add-form').hide();
+            
+            // Request JSONP data
+            $.ajax(
+		{
+		    url: Opencast.Watch.getAnnotationURL(),
+		    data: "episode=" + mediaPackageId+"&type="+annotationType+"&limit=1000",
+		    dataType: 'json',
+		    jsonp: 'jsonp',
+		    success: function (data)
+		    {
+			$.log("Annotation AJAX call: Requesting data succeeded");
+			
+			var count = 0;
+			var slideCount = 0;
+			var scrubberCount = 0;
+			var normalCount = 0;
+			var replyCount = 0;
+			
+			if ((data === undefined) || (data['annotations'] === undefined) || (data['annotations'].annotation === undefined))
+			{
+			    $.log("Annotation AJAX call: Data not available");
+			    //show nothing
+			    $('#oc-comments-list').html("");
+			    //displayNoAnnotationsAvailable("No data defined");
+			    isOpening = false;
+			}
+			else
+			{
+			    $.log("Annotation AJAX call: Data available");
+			    
+			    var commentData = new Object();                  
+			    var commentArray = new Array();
+			    var replyArray = new Array();
+			    
+			    if(data['annotations'].total > 1){
+				$(data['annotations'].annotation).each(function (i)
+								       {
+									   //split data by <> [user]<>[text]<>[type]<>[xPos]<>[yPos]<>[segId]
+									   //OR split data by <> [user]<>[text]<>[type]<>[replyID]
+									   var dataArray = data['annotations'].annotation[i].value.split("<>");
+									   var comment = new Object();
+									   
+									   comment.id = data['annotations'].annotation[i].annotationId;
+									   comment.inpoint = data['annotations'].annotation[i].inpoint;
+									   var created = data['annotations'].annotation[i].created;         
+									   var dateCr = $.dateStringToDate(created);
+									   comment.created = $.getDateString(dateCr) + " " + $.getTimeString(dateCr);
+									   comment.user = dataArray[0];
+									   comment.text = dataArray[1];
+									   comment.type = dataArray[2];                            
+									   if(dataArray[2] === "slide"){
+									       comment.slide = dataArray[5];
+									       slideCount++;                                    
+									   }else if(dataArray[2] === "scrubber"){
+									       scrubberCount++;
+									   }else if(dataArray[2] === "normal"){
+									       normalCount++;
+									   }else if(dataArray[2] === "reply"){
+                            						       comment.replyID = dataArray[3];
+									   }
+									   if(dataArray[2] !== "reply"){
+                            						       commentArray[count] = comment;
+                            						       count++; 
+									   }else{
+                            						       replyArray[replyCount] = comment;
+                            						       replyCount++;
+									   }                                            
+								       });
+				//last comments on top
+				commentArray.reverse();
+				replyArray.reverse();
+			    }
+			    else if(data['annotations'].total !== 0)
+			    {
+				//split data by <> [user]<>[text]<>[type]<>[xPos]<>[yPos]<>[segId]
+				//OR split data by <> [user]<>[text]<>[type]<>[replyID]
+				var dataArray = data['annotations'].annotation.value.split("<>");
+				var comment = new Object();
+				comment.id = data['annotations'].annotation.annotationId;
+				comment.inpoint = data['annotations'].annotation.inpoint;
+				var created = data['annotations'].annotation.created;         
+				var dateCr = $.dateStringToDate(created);
+				comment.created = $.getDateString(dateCr) + " " + $.getTimeString(dateCr);
+				comment.user = dataArray[0];
+				comment.text = dataArray[1];
+				comment.type = dataArray[2];                            
+				if(dataArray[2] === "slide"){
+                                    comment.slide = dataArray[5];
+                                    slideCount++;                                    
+				}else if(dataArray[2] === "scrubber"){
+                                    scrubberCount++;
+				}else if(dataArray[2] === "normal"){
+                                    normalCount++;
+				}else if(dataArray[2] === "reply"){
+                            	    comment.replyID = dataArray[3];
+				}
+				if(dataArray[2] !== "reply"){
+                            	    commentArray[0] = comment;
+                            	    count++; 
+				}else{
+                            	    replyArray[0] = comment;
+                            	    replyCount++;
+				}    
+			    }
+			    
+			    commentData.comment = commentArray;
+			    commentData.replys = replyArray;
+			    
+			    $.log("commentList template process");
+			    // Create Trimpath Template
+			    var commentListSet = Opencast.Annotation_Comment_List_Plugin.addAsPlugin($('#oc-comments-list'), commentData);
+			    
+			    if (!commentListSet)
+			    {
+				$.log("No commentList template processed");
+			    }        
+			}
+			
+			//process header
+			if(count === 1){
+			    $("#oc-comments-list-header-top").html(count+" Comment");
+			}else{
+			    $("#oc-comments-list-header-top").html(count+" Comments");
+			}
+			var line = "";
+			if(slideCount === 1){
+			    line += slideCount+ " slide comment, ";
+			}else{
+			    line += slideCount+ " slide comments, ";
+			}
+			if(scrubberCount === 1){
+			    line += scrubberCount+ " timed comment, ";
+			}else{
+			    line += scrubberCount+ " timed comments, ";
+			}
+			if(normalCount === 1){
+			    line += normalCount+ " regular comment and ";
+			}else{
+			    line += normalCount+ " regular comments and ";
+			}
+			
+			if(replyCount === 1){
+			    line += replyCount+ " reply";
+			}else{
+			    line += replyCount+ " replys";
+			}
+			$("#oc-comments-list-header-bottom").html(line);
+			
+			$('#oc_comments-list-loading').hide();
+			$('#oc-comments-list-header').show();
+			$('#oc-comments-list').show();
+			$('#oc-comments-list-add-form').show();
+			//scroll down
+			$(window).scrollTop( $('#oc_btn-comments-tab').offset().top - 10 );
+			isOpening = false;
+			isOpen = true;
+		    },
+		    // If no data comes back
+		    error: function (xhr, ajaxOptions, thrownError)
+		    {
+			$.log("Comment Ajax call: Requesting data failed "+xhr+" "+ ajaxOptions+" "+ thrownError);
+			isOpening = false;
+		    }
+		});
+	} 
     }
     
     /**
@@ -410,16 +413,18 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function hide()
     {
-        $.log("hide commment list");
-        // Change Tab Caption
-        comment_list_show = false;
-        $('#oc_btn-comments-tab').attr(
-        {
-            title: COMMENTNOHIDE
-        });
-        $('#oc_btn-comments-tab').html(COMMENTNOHIDE);
-        $("#oc_btn-comments-tab").attr('aria-pressed', 'false');
-        $('#oc_comments-list-wrapper').hide();
+	if(isOpen)
+	{
+            // Change Tab Caption
+            $('#oc_btn-comments-tab').attr(
+		{
+		    title: COMMENTNOHIDE
+		});
+            $('#oc_btn-comments-tab').html(COMMENTNOHIDE);
+            $("#oc_btn-comments-tab").attr('aria-pressed', 'false');
+            $('#oc_comments-list-wrapper').hide();
+	    isOpen = false;
+	}
     }
     
     /**
@@ -427,11 +432,10 @@ Opencast.Annotation_Comment_List = (function ()
      @description Toggle the Annotation_Comment_List
      */
     function doToggle()
-    {        
-        
-        $.log("toggle commment list");
-        if (comment_list_show === false)
+    {
+        if (!isOpen)
         {
+	    Opencast.Plugin_Controller.hideAll(Opencast.Annotation_Comment_List);
             show();
         }
         else

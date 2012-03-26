@@ -34,7 +34,7 @@ Opencast.search = (function ()
         lastHit = '',         // storage for latest successful search hit
         validSegments = [],   // map of old and new segments
         requestedValidSegments = false,
-        searchOpen = false,
+        isOpen = false,
         currentInputElem = '',
         currentSearchStr = '';
     
@@ -66,16 +66,6 @@ Opencast.search = (function ()
     function getThirdColor()
     {
         return colorThird;
-    }
-    
-    /**
-     * @memberOf Opencast.search
-     * @description Initializes the search view
-     */
-    function initialize()
-    {
-	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.search);
-	$.log("Opencast.search registered: " + reg);
     }
     
     /**
@@ -227,7 +217,7 @@ Opencast.search = (function ()
             $(staticInputElem).val('');
         }
         // Hide other Tabs
-	Opencast.Plugin_Controller.hideAll();
+	Opencast.Plugin_Controller.hideAll(Opencast.search);
         $("#oc_btn-lecturer-search").attr('aria-pressed', 'true');
         // Show a loading Image
         $('#oc_search-segment').show();
@@ -364,10 +354,10 @@ Opencast.search = (function ()
      */
     function displayResult()
     {
-        searchOpen = true;
         $('#oc_search-segment').show();
         $('#search-loading').hide();
         $('#oc-search-result').show();
+	isOpen = true;
     }
     
     /**
@@ -376,14 +366,17 @@ Opencast.search = (function ()
      */
     function hide()
     {
-        searchOpen = false;
-        $("#oc_btn-lecturer-search").attr('aria-pressed', 'false');
-        $('#oc_search-segment').hide();
-        // Write the default value if no search value has been given
-        if ($(staticInputElem).val() === '')
-        {
-            $(staticInputElem).val(SEARCH);
-        }
+	if(isOpen)
+	{
+            $("#oc_btn-lecturer-search").attr('aria-pressed', 'false');
+            $('#oc_search-segment').hide();
+            // Write the default value if no search value has been given
+            if ($(staticInputElem).val() === '')
+            {
+		$(staticInputElem).val(SEARCH);
+            }
+            isOpen = false;
+	}
     }
     
     /**
@@ -393,6 +386,8 @@ Opencast.search = (function ()
     function initialize()
     {
         requestedValidSegments = false;
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.search);
+	$.log("Opencast.search registered: " + reg);
     }
     
     /**
@@ -402,7 +397,7 @@ Opencast.search = (function ()
      */
     function isOpen()
     {
-        return searchOpen;
+        return isOpen;
     }
     
     return {
