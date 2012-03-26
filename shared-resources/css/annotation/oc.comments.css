@@ -110,7 +110,8 @@
 
 #oc-comment-info-value-wrapper{
 	width: 348px;
-	max-height:110px;
+	max-height:112px;
+	min-height:112px;
 	overflow:auto; 
 }
 
@@ -146,72 +147,56 @@
 }
 
 .oc-comment-namebox{
-    color:#FFFFFF;
-    border-style: solid;
-    border-color:#FFFFFF;
-    border-width: 1px;
-    height: 20px;
-    margin-left: 10px;
-    margin-top: 20px;
-    width: 260px;
-    background: none repeat scroll 0 0 rgba(0, 0, 0, 0.0);       
+	color: white;
+	border-style: solid;
+	border-color: white;
+	border-width: 1px;
+	height: 16px;
+	margin-left: 10px;
+	margin-top: 1px;
+	width: 100px;
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 0.0);
+	float: left;      
 }
 
 .oc-comment-submit{
     background: none repeat scroll 0 0 #282828;
     border-width: 1px;
     border-color: black;
+    color: white;
     border-radius: 15px 15px 15px 15px;
     float: right;
-    text-align: center;
     width: 40px;
-    height: 16px;
+    height: 18px;
 }
 
 .oc-comment-submit:hover{
     background: none repeat scroll 0 0 rgba(255, 102, 0, 0.9);
 }
 
-.oc-comment-submit-name{
-    background: none repeat scroll 0 0 #282828;
-    border-width: 1px;
-    border-color: black;
-    border-radius: 15px 15px 15px 15px;
-    float: right;
-    text-align: center;
-    width: 40px;
-    height: 16px;
-}
-
-.oc-comment-submit-name:hover{
-    background: none repeat scroll 0 0 rgba(255, 102, 0, 0.9);
-}
-
-#oc-comment-add-space{
-    float: right;
-    width: 5px;
-    height: 5px;
-    
-}
-
-.oc-comment-add-exit{
+.oc-comment-exit{
 	cursor:pointer;
 	cursor:hand;
-}
-
-#oc-comment-add-cancel{   
-    background: none repeat scroll 0 0 transparent;
-    font-size: 0.9em;
-    float: right;
-    width: 50px;
 }
 
 #oc-comment-add-textbox{
 	background: none repeat scroll 0 0 rgba(0, 0, 0, 0.0);
 	color: white;
-	border-style: none;	
-	width: 280px;
-	height: 85px;
+	border-style: none;
+	width: 220px;
+	height: 55px;
+	margin-left: 20px;
+	margin-top: 2px;
+}
+
+#oc-comment-add-reply-textbox {
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 0.0);
+	color: white;
+	border-style: none;
+	width: 220px;
+	height: 55px;
+	margin-left: 100px;
+	margin-top: 2px;
 }
 
 .oc-comment-info-cm-btn{
@@ -271,7 +256,8 @@
     font-size: 0.8em;
     font-weight: bold;
     padding-left: 10px;
-    padding-top: 4px; 
+    padding-top: 4px;
+    float: left;
 }
 
 

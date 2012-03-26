@@ -29,7 +29,7 @@ Opencast.Scrubber_CommentPlugin = (function ()
                      '{for a in comment}' +
                        '<div id="scComment${a.getID()}" class="oc-comment-scrubber-baloon" inpoint="${a.getInpoint()}" style="left:${(parseInt(a.getInpoint()) / parseInt(duration)) * 100}%;" '+
                        'onmouseover="Opencast.Annotation_Comment.hoverComment(\'${a.getID()}\', \'${a.getText()}\',\'${a.getInpoint()}\',\'${a.getCreator()}\')" ' +
-                       'onclick="Opencast.Annotation_Comment.clickComment(\'${a.getID()}\', \'${a.getText()}\',\'${a.getInpoint()}\',\'${a.getCreator()}\')" ' +
+                       'onclick="Opencast.Annotation_Comment.clickComment(\'${a.getInpoint()}\')" ' +
                        'onmouseout="Opencast.Annotation_Comment.hoverOutComment()" ' +
                        '>' +
                        '</div>' +
