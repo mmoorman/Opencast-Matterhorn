@@ -25,8 +25,7 @@ Opencast.Slide_CommentPlugin = (function ()
     var template_slide =
                      '{for a in comment}' +
                        '<canvas id="slideComment${a.getID()}" style="z-index:10;width:18px;height:18px;top:${a.getY()}%;position:absolute;left:${a.getX()}%;" '+
-                       'onmouseover="Opencast.Annotation_Comment.hoverSlideComment(\'slideComment${a.getID()}\',\'${a.getText()}\',\'${a.getCreator()}\',\'${a.getSlideNr()}\')" ' +
-                       'onclick="Opencast.Annotation_Comment.clickSlideComment(\'slideComment${a.getID()}\',\'${a.getText()}\',\'${a.getCreator()}\',\'${a.getSlideNr()}\')" ' +
+                       'onmouseover="Opencast.Annotation_Comment.hoverSlideComment(\'${a.getID()}\',\'${a.getText()}\',\'${a.getCreator()}\',\'${a.getSlideNr()}\')" ' +
                        'onmouseout="Opencast.Annotation_Comment.hoverOutSlideComment()" ' +
                        '>' +
                        '</canvas>' +

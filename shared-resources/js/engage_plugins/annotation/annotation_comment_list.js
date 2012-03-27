@@ -404,7 +404,7 @@ Opencast.Annotation_Comment_List = (function ()
 			isOpening = false;
 		    }
 		});
-	} 
+	}
     }
     
     /**
