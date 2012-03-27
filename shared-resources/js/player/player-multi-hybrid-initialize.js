@@ -761,7 +761,8 @@ Opencast.Initialize = (function ()
             }
             $('#oc_embed-costum-height-textinput').css('background-color', '#ffffff');
         }); /* initalise embed buttons */
-        $("#oc_embed-icon-one, #oc_embed-icon-two, #oc_embed-icon-three, #oc_embed-icon-four, #oc_embed-icon-five", "#oc_embed-left").button(); /* initalise search button */
+        $("#oc_embed-icon-one, #oc_embed-icon-two, #oc_embed-icon-three, #oc_embed-icon-four, #oc_embed-icon-five", "#oc_embed-left").button();
+	/* initalise search button */
         $("#oc_btn-search", "#oc_search").button();
         $("#oc_btn-cc", "#oc_video-time").button();
         $('#oc_btn-leave-share, #oc_btn-leave-session-time').button(
@@ -779,7 +780,8 @@ Opencast.Initialize = (function ()
         {
             selected: -1
         });
-        $("#oc_ui_tabs").tabs("option", "collapsible", true); /* handle select event for each tab */
+        $("#oc_ui_tabs").tabs("option", "collapsible", true);
+	/* handle select event for each tab */
         $("#oc_ui_tabs").tabs(
         {
             select: function (event, ui)

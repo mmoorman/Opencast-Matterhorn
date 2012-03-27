@@ -390,16 +390,6 @@ Opencast.search = (function ()
 	$.log("Opencast.search registered: " + reg);
     }
     
-    /**
-     * @memberOf Opencast.search
-     * @description Returns if search is opened
-     * @return true if search is opened, false else
-     */
-    function isOpen()
-    {
-        return isOpen;
-    }
-    
     return {
         getFirstColor: getFirstColor,
         getSecondColor: getSecondColor,

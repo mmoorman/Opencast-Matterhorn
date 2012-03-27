@@ -165,10 +165,10 @@ Opencast.segments = (function ()
             if ($panels[0] !== undefined)
             {
                 $container.css('width', ($panels[0].offsetWidth * $panels.length)).css('left', "0px");
-                // Disable and grey out "Annotation" Tab
+                // Disable and grey out "Comment" Tab
                 $("#oc_ui_tabs").tabs(
                 {
-                    disabled: [4]
+                    disabled: [3]
                 });
             }
             var scroll = $('#slider .scroll').css('overflow', 'hidden');

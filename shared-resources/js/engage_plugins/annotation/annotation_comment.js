@@ -183,15 +183,15 @@ Opencast.Annotation_Comment = (function ()
 
 	//IDENTICON CODE
 	/*
-	 * 	pwEncrypt = $().crypt( {
-	 method: 'md5',
-	 source: "Martin"
-	 });
-	 
-	 $("#identicon2").html(pwEncrypt);
-	 
-	 $("#identicon1").identicon5();
-	 $("#identicon2").identicon5();
+	  pwEncrypt = $().crypt( {
+	  method: 'md5',
+	  source: "Martin"
+	  });
+	  
+	  $("#identicon2").html(pwEncrypt);
+	  
+	  $("#identicon1").identicon5();
+	  $("#identicon2").identicon5();
 	*/
     	
     	if(modus === "public")
@@ -243,7 +243,7 @@ Opencast.Annotation_Comment = (function ()
             }
         });
         
-         //// UI ////
+        //// UI ////
         //add scrubber comment handler
         $("#oc_btn-add-comment").click(function()
 				       {
@@ -682,58 +682,61 @@ Opencast.Annotation_Comment = (function ()
         
         //Set username if public
         if(modus === "public")
-        	setUsername(user);
+	{
+            setUsername(user);
+	}
                
         var data = "";
 
        	var timePos = curPosition;
        	var replyID = curPosition;
         if(type === "reply"){
-        	//comment data [user]<>[text]<>[type]<>[replyID]
-        	if(replyID !== undefined){
-        		data = user+"<>"+value+"<>"+type+"<>"+replyID;
-        		timePos = 0;
-        	}else{
-        		$.log("Opencast.Annotation_Comment: illegal add comment parameters");
-        		return;
-        	}
+            //comment data [user]<>[text]<>[type]<>[replyID]
+            if(replyID !== undefined){
+        	data = user+"<>"+value+"<>"+type+"<>"+replyID;
+        	timePos = 0;
+            }else{
+        	$.log("Opencast.Annotation_Comment: illegal add comment parameters");
+        	return;
+            }
         }else{
-        	//comment data [user]<>[text]<>[type]<>[xPos]<>[yPos]<>[segId]
-	        if(xPos !== undefined && yPos !== undefined){
-	            data = user+"<>"+value+"<>"+type+"<>"+xPos+"<>"+yPos+"<>"+segId;
-	            //var markdiv = "<div style='height:100%; width:5px; background-color: #A72123; float: right;'> </div>";
-	            //$("#segment"+segId).html(markdiv);
-	        }else{
-	            data = user+"<>"+value+"<>"+type;        
-	        }      
+            //comment data [user]<>[text]<>[type]<>[xPos]<>[yPos]<>[segId]
+	    if(xPos !== undefined && yPos !== undefined){
+	        data = user+"<>"+value+"<>"+type+"<>"+xPos+"<>"+yPos+"<>"+segId;
+	        //var markdiv = "<div style='height:100%; width:5px; background-color: #A72123; float: right;'> </div>";
+	        //$("#segment"+segId).html(markdiv);
+	    }else{
+	        data = user+"<>"+value+"<>"+type;        
+	    }      
         }        
         $.ajax(
-        {
-            type: 'PUT',
-            url: "../../annotation/",
-            data: "episode="+mediaPackageId+"&type="+annotationType+"&in="+timePos+"&value="+data+"&out="+curPosition,
-            dataType: 'xml',
-            success: function (xml)
             {
-                $.log("add comment success");
-                //erase cache
-                comments_cache = undefined;
-                //show new comments
-                show();
-                //check checkbox
-                $('#oc_checkbox-annotation-comment').attr('checked', true);
-                
-                var comment_list_show = $('#oc_btn-comments-tab').attr("title");
-                if(comment_list_show == "Hide Comments"){
-                    Opencast.Annotation_Comment_List.showComments();
-                }                    
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-                $.log("Add_Comment error: "+textStatus);
-            }
-        });
+		type: 'PUT',
+		url: "../../annotation/",
+		data: "episode="+mediaPackageId+"&type="+annotationType+"&in="+timePos+"&value="+data+"&out="+curPosition,
+		dataType: 'xml',
+		success: function (xml)
+		{
+                    $.log("add comment success");
+                    //erase cache
+                    comments_cache = undefined;
+                    //show new comments
+                    show();
+                    //check checkbox
+                    $('#oc_checkbox-annotation-comment').attr('checked', true);
+                    
+                    var comment_list_show = $('#oc_btn-comments').attr("title");
+                    if(comment_list_show == "Hide Comments"){
+			Opencast.Annotation_Comment_List.showComments();
+                    }                    
+		},
+		error: function (jqXHR, textStatus, errorThrown)
+		{
+                    $.log("Add_Comment error: "+textStatus);
+		}
+            });
     }
+    
     /**
      * @memberOf Opencast.Annotation_Comment
      * @description Show Annotation_Comment
@@ -743,6 +746,7 @@ Opencast.Annotation_Comment = (function ()
 	if(!isOpen && !isOpened)
 	{
             isOpening = true;
+
             // Request JSONP data
             $.ajax(
 		{
@@ -849,7 +853,9 @@ Opencast.Annotation_Comment = (function ()
 									   }                  
 									   
 								       });                       
-			    }else if(data['annotations'].total != 0){
+			    }
+			    else if(data['annotations'].total != 0)
+			    {
 				//split data by <> [user]<>[text]<>[type]<>[xPos]<>[yPos]<>[segId]
 				var dataArray = data['annotations'].annotation.value.split("<>");
 				var comment = new Object();
@@ -1133,7 +1139,7 @@ Opencast.Annotation_Comment = (function ()
 		{
             	    $.log("Comment DELETE Ajax call: Request success");
 		    del_local(commentID,type);
-		    var comment_list_show = $('#oc_btn-comments-tab').attr("title");
+		    var comment_list_show = $('#oc_btn-comments').attr("title");
                     if(comment_list_show == "Hide Comments"){
                     	Opencast.Annotation_Comment_List.showComments();
                     }

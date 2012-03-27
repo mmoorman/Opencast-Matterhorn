@@ -228,12 +228,12 @@ Opencast.Annotation_Comment_List = (function ()
             // Hide other Tabs
 	    Opencast.Plugin_Controller.hideAll(Opencast.Annotation_Comment_List);
             // Change Tab Caption
-            $('#oc_btn-comments-tab').attr(
+            $('#oc_btn-comments').attr(
 		{
 		    title: COMMENTSHIDE
 		});
-            $('#oc_btn-comments-tab').html(COMMENTSHIDE);
-            $("#oc_btn-comments-tab").attr('aria-pressed', 'true');
+            $('#oc_btn-comments').html(COMMENTSHIDE);
+            $("#oc_btn-comments").attr('aria-pressed', 'true');
             // Show a loading Image
             $('#oc_comments-list-wrapper').show();
             $('#oc_comments-list-loading').show();
@@ -393,7 +393,7 @@ Opencast.Annotation_Comment_List = (function ()
 			$('#oc-comments-list').show();
 			$('#oc-comments-list-add-form').show();
 			//scroll down
-			$(window).scrollTop( $('#oc_btn-comments-tab').offset().top - 10 );
+			$(window).scrollTop( $('#oc_btn-comments').offset().top - 10 );
 			isOpening = false;
 			isOpen = true;
 		    },
@@ -416,12 +416,12 @@ Opencast.Annotation_Comment_List = (function ()
 	if(isOpen)
 	{
             // Change Tab Caption
-            $('#oc_btn-comments-tab').attr(
+            $('#oc_btn-comments').attr(
 		{
 		    title: COMMENTNOHIDE
 		});
-            $('#oc_btn-comments-tab').html(COMMENTNOHIDE);
-            $("#oc_btn-comments-tab").attr('aria-pressed', 'false');
+            $('#oc_btn-comments').html(COMMENTNOHIDE);
+            $("#oc_btn-comments").attr('aria-pressed', 'false');
             $('#oc_comments-list-wrapper').hide();
 	    isOpen = false;
 	}
