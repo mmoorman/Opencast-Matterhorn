@@ -27,14 +27,16 @@ Opencast.Annotation_Comment_List = (function ()
     defaultText = "Type Your Comment Here",
     annotationType = "comment",
     isOpening = false,
-    isOpen = false;
+    isOpen = false,
+    modus = "private",
+    annotationType = "comment";
     
     var replyTemplate =  '<tr class="oc-comment-list-reply-row" id="comment-row-reply-form"  >' +
                             '<td class="oc-comment-list-border" style="cursor:pointer;cursor:hand;">' +
                             	'<div id="oc-comment-list-reply-wrapper" style="display:none">'+
                             		'<p style="width:65px;float: left;"></p> ' +                           	                         
 	                            	'<div class="oc-comment-list-left-reply-row" align="left" style="cursor:pointer;cursor:hand;">' +
-	                            	    '<div class="oc-comment-list-user-icon-reply"><img src="/engage/ui/img/annotation/user.png" width="50" height="50"></div>' +
+	                            	    '<div class="oc-comment-list-user-icon-reply"></div>' +
 	                            	'</div>' +
                             		'<div class="oc-comment-list-reply-form">' + 
                             			'<div id="oc-comments-list-reply-addbox">' +
@@ -542,6 +544,10 @@ Opencast.Annotation_Comment_List = (function ()
     	cancelReply(function(){
 	 		$("#comment-row-"+commentID).after(replyTemplate);
 			$("#oc-comment-list-reply-wrapper").slideDown(600);
+			//draw identicon			
+			pwEncrypt = $().crypt( {method: 'md5',source: user});
+            $(".oc-comment-list-user-icon-reply").html(pwEncrypt);
+            $(".oc-comment-list-user-icon-reply").identicon5({rotate:true, size:50});
 			//Submit Button
 			$("#oc-comments-list-reply-submit").click(function(){
 				var textBoxValue = $("#oc-comments-list-reply-textbox").val();
@@ -607,6 +613,24 @@ Opencast.Annotation_Comment_List = (function ()
 		}	
     }
     
+     /**
+     * @memberOf Opencast.Annotation_Comment_List
+     * @description get modus of comment feature
+     */
+    function getModus()
+    {
+        return modus;
+    }
+   
+    /**
+     * @memberOf Opencast.Annotation_Comment_List
+     * @description set modus of comment feature
+     */
+    function setModus(m)
+    {
+        modus = m;
+    }
+    
     return {
         initialize: initialize,
         show: show,
@@ -614,6 +638,8 @@ Opencast.Annotation_Comment_List = (function ()
         refreshUIUsername: refreshUIUsername,
         clickCommentList: clickCommentList,
         deleteComment: deleteComment,
+        getModus: getModus,
+        setModus: setModus,
         replyComment: replyComment,
         cancelReply: cancelReply,
         hoverOutCommentList: hoverOutCommentList,

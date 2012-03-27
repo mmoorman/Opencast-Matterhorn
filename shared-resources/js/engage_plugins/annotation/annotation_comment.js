@@ -850,8 +850,7 @@ Opencast.Annotation_Comment = (function ()
                             							   dataArray[3] //Reply ID
                             						       );
                             						       reply_map.addReplyToComment(comment);                           		
-									   }                  
-									   
+									   }
 								       });                       
 			    }
 			    else if(data['annotations'].total != 0)
