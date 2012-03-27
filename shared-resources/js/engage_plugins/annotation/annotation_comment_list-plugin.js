@@ -32,7 +32,7 @@ Opencast.Annotation_Comment_List_Plugin = (function ()
                                     		'<p style="width:10px;float: left;"></p> ' +
                                     	'{/if}' +                                 
 	                                    '<div class="oc-comment-list-left-row" align="left" style="cursor:pointer;cursor:hand;">' +
-	                                        '<div class="oc-comment-list-user-icon"><img src="/engage/ui/img/annotation/user.png" width="50" height="50"></div>' +
+	                                        '<div id ="oc-comment-list-user-icon-${c.id}" class="oc-comment-list-user-icon"></div>' +
 	                                    '</div>' +
 	                                    '<div class="oc-comment-list-middle-row" align="left" style="cursor:pointer;cursor:hand;">' +
 	                                        '<div class="oc-comment-list-user-text">${c.user}</div>' +
@@ -66,14 +66,12 @@ Opencast.Annotation_Comment_List_Plugin = (function ()
                                     '</td>' +
                                 '</tr>' +
                                 '{for rc in replys}' +
-                                	//'${alert(rc.id +" "+c.id)}' +
                                 	'{if rc.replyID == c.id}' +
-                                	//'${alert("Found")}' +
 										'<tr class="oc-comment-list-row" id="comment-row-${rc.id}" >' +
 											'<td class="oc-comment-list-border" style="cursor:pointer;cursor:hand;">' +
 												'<p style="width:65px;float: left;"></p> ' +
 											    '<div class="oc-comment-list-left-row" align="left" style="cursor:pointer;cursor:hand;">' +
-											        '<div class="oc-comment-list-user-icon"><img src="/engage/ui/img/annotation/user.png" width="50" height="50"></div>' +
+											        '<div id="oc-comment-list-user-icon-${rc.id}" class="oc-comment-list-user-icon"></div>' +
 											    '</div>' +
 											    '<div class="oc-comment-list-middle-row" align="left" style="cursor:pointer;cursor:hand;">' +
 											        '<div class="oc-comment-list-user-text">${rc.user}</div>' +
@@ -114,6 +112,19 @@ Opencast.Annotation_Comment_List_Plugin = (function ()
         return drawAnnotation_Comment();
     }
     
+     /**
+     * @memberOf Opencast.Annotation_Comment_List_Plugin
+     * @description draw identicon icon in given DOM element with given username
+     * @param elem Element to fill
+     * @param user Username
+     */
+    function drawIdenticon(elemID,user)
+    {
+        pwEncrypt = $().crypt( {method: 'md5',source: user});
+        $("#"+elemID).html(pwEncrypt);
+        $("#"+elemID).identicon5({rotate:true, size:50});
+    }
+    
     /**
      * @memberOf Opencast.Annotation_Comment_List_Plugin
      * @description Resize Plug-in
@@ -138,7 +149,15 @@ Opencast.Annotation_Comment_List_Plugin = (function ()
         {
             $.log("Annotation_Comment_List_Plugin: Data available, processing template");
             processedTemplateData = template.process(annotation_CommentData);
+            //$.log("Annotation_Comment_List_Plugin: processed template: "+processedTemplateData);
             element.html(processedTemplateData);
+            //draw identicon icons
+            $(annotation_CommentData.comment).each(function(i){
+                drawIdenticon("oc-comment-list-user-icon-"+annotation_CommentData.comment[i].id,annotation_CommentData.comment[i].user);
+            });
+            $(annotation_CommentData.replys).each(function(i){
+                drawIdenticon("oc-comment-list-user-icon-"+annotation_CommentData.replys[i].id,annotation_CommentData.replys[i].user);
+            });
           
             return true;
         }

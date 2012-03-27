@@ -187,10 +187,7 @@ Opencast.Annotation_Comment = (function ()
     	
 		//IDENTICON CODE
 		/*
-		 * 	pwEncrypt = $().crypt( {
-		 method: 'md5',
-		 source: "Martin"
-		 });
+		 * 	pwEncrypt = $().crypt( {method: 'md5',source: "Martin"});
 
 		 $("#identicon2").html(pwEncrypt);
 
@@ -848,19 +845,25 @@ Opencast.Annotation_Comment = (function ()
                     }else if(data['annotations'].total !== 0){
                             //split data by <> [user]<>[text]<>[type]<>[xPos]<>[yPos]<>[segId]
                             var dataArray = data['annotations'].annotation.value.split("<>");
-                            var comment = new Object();
-                            comment.id = data['annotations'].annotation.annotationId;
-                            comment.user = dataArray[0];
-                            comment.text = dataArray[1];
                             if(dataArray[2] === "scrubber"){                              
-                                comment.inpoint = data['annotations'].annotation.inpoint;
+                                comment = new ScrubberComment(
+                                dataArray[0], //username
+                                data['annotations'].annotation.annotationId, //ID
+                                dataArray[1], //text
+                                data['annotations'].annotation.inpoint //inpoint
+                                );
                                 scrubberArray[0] = comment;
+                                scCount++;
                             }else if(dataArray[2] === "slide" && dataArray[5] == Opencast.segments.getCurrentSlideId()){
-                                comment.slideNr = dataArray[5];
-                                comment.relPos = new Object();
-                                comment.relPos.x = dataArray[3];
-                                comment.relPos.y = dataArray[4];
-                                comment.text = dataArray[1];
+                                var relPos = {x:dataArray[3],y:dataArray[4]};
+                                comment = new SlideComment(
+                                    dataArray[0], //username
+                                    data['annotations'].annotation.annotationId, //ID
+                                    dataArray[1], //text
+                                    dataArray[5], //slide nr
+                                    relPos //relative position on the slide
+                                );
+                                slCount++;
                                 slideArray[0] = comment;
                                 toMarkSlidesArray[0] = dataArray[5];                     
                             }else if(dataArray[2] === "slide"){
@@ -937,7 +940,7 @@ Opencast.Annotation_Comment = (function ()
         //process html for comments
         var deleteCMBtn = "";
         if(userId === cm_username){
-        	deleteCMBtn = "<input onclick='Opencast.Annotation_Comment.deleteComment("+commentId+",\"slide\")' class='oc-comment-info-cm-btn oc-comment-info-cm-delbtn' type='image' src='/engage/ui/img/misc/space.png' name='Delete' alt='Delete' title='Delete' value='Delete'>";
+        	deleteCMBtn = "<input onclick='Opencast.Annotation_Comment.deleteComment("+commentId+",\"scrubber\")' class='oc-comment-info-cm-btn oc-comment-info-cm-delbtn' type='image' src='/engage/ui/img/misc/space.png' name='Delete' alt='Delete' title='Delete' value='Delete'>";
         }
         $("#oc-comment-info-value-wrapper").html(
         		"<div id='oc-comment-info-comment"+commentId+"'>"+
@@ -1112,7 +1115,7 @@ Opencast.Annotation_Comment = (function ()
 				//Remove from  local reply map
 				reply_map.removeReplysByCID(commentID);
 				//TODO Check weather comment is the last in this balloon
-				//Remove comment info from DOM, hide Comment balloon, remove comment point from scrubber
+				//Remove comment info from DOM,Type Your Comment Here hide Comment balloon, remove comment point from scrubber
             	$("#oc-comment-info-comment"+commentID).remove();
             	$("#slideComment"+commentID).remove();
             	$(".oc-comment-exit").click();

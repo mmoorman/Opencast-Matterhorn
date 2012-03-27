@@ -87,19 +87,8 @@ Opencast.Scrubber_CommentPlugin = (function ()
         {
             $.log("Scrubber Comment Plugin: Data available, processing template");
             processedTemplateData = template_scrubber.process(annotation_CommentData);
-            //$.log("processedTemplateData: "+processedTemplateData);
-            element.html(processedTemplateData);
-            //draw balloons with html5
-            /*
-            $(annotation_CommentData.comment).each(function (i)
-            {
-                var id = annotation_CommentData.comment[i].id;
-                var c_canvas = $("#scComment"+id)[0];
-                
-                drawBalloon(c_canvas);
-            });
-            */
-            
+            $.log("processedTemplateData: "+processedTemplateData);
+            element.html(processedTemplateData);         
             return true;
         }
         else
@@ -107,42 +96,6 @@ Opencast.Scrubber_CommentPlugin = (function ()
             $.log("Annotation Plugin: No data available");
             return false;
         }
-    }
-    
-     /**
-     * @memberOf Opencast.Scrubber_CommentPlugin
-     * @description draw the comment icon with the canvas element
-     * @param canvas DOM canvas element
-     */   
-    function drawBalloon(canvas){
-	    var ctx = canvas.getContext('2d');
-	    
-	    ctx.save();
-	    //ctx.fillStyle = "rgba(167,33,35,0.9)";
-	    //ctx.fillStyle = "rgba(255, 140, 80, 1.0)";
-	    //ctx.fillStyle = "rgba(83, 168, 253, 0.6)";
-	    //ctx.strokeStyle = "rgba(0, 0, 0, 1.0)";
-	    //ctx.lineWidth   = 8;
-	    
-		var lineargradient = ctx.createLinearGradient(0,0,80,80);  
-		lineargradient.addColorStop(0,'white');  
-		lineargradient.addColorStop(1,'black');
-		
-		  // assign gradients to fill and stroke styles  
-		ctx.fillStyle = lineargradient;
-		ctx.strokeStyle = lineargradient; 
-	
-	    
-	    ctx.shadowOffsetX = 5;
-	    ctx.shadowOffsetY = 2;
-	    ctx.shadowBlur = 20;
-	    ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
-	
-	    ctx.beginPath();
-		ctx.arc(75,75,50,0,Math.PI*2,true); // Outer circle 
-	    ctx.fill();
-	    ctx.stroke();
-	    ctx.restore();
     }
     
     return {
