@@ -409,13 +409,15 @@
         </ul>
       </div>
       <!-- END #oc_tabs -->
-
+      
+      <!-- Description tab content -->
       <div id="oc_description" class="fl-fix">
         <div id="description-loading" class="loadingImage"></div>
         <div id="oc-description"></div>
       </div>
       <!-- END #oc_description -->
-
+      
+      <!-- Slides tab content -->
       <div id="oc_slides" class="oc_DisplayBlock">
         <div id="segments-holder" class="oc-segments-holder">
           <div id="oc_segment-table" class="oc-segments">
@@ -434,33 +436,8 @@
         </div>
       </div>
       <!-- END #oc_slides -->
-      	<!-- comment list box-->
-		<div id="oc_comments-list-wrapper" class="fl-fix">
-			<div id="oc_comments-list-loading" class="loadingImage"></div>
-			<div id="oc-comments-list-add-form">
-				<p class="oc-comments-list-headingtext">
-					Add A New Comment
-				</p>
-				<p class="oc-comments-list-text">
-					Use the comment checkbox to show/add timed and slide comments.
-				</p>
-				<div id="oc-comments-list-addbox">
-					<div>
-						<input id="oc-comments-list-namebox" name="Name" type="text">
-					</div>
-					<textarea id="oc-comments-list-textbox" ></textarea>
-					<input id="oc-comments-list-submit" value="Add Comment" role="button" type="button" />
-					<input id="oc-comments-list-submit-timed" value="Add Comment at 00:12:33" role="button" type="button" />
-				</div>
-			</div>
-			<div id="oc-comments-list-header">
-				<p id="oc-comments-list-header-top" class="oc-comments-list-headingtext"></p>
-				<p id="oc-comments-list-header-bottom" class="oc-comments-list-boldtext"></p>
-			</div>
-			<div id="oc-comments-list"></div>
-		</div>
-		<!-- END comment list box -->
-
+	
+      <!-- Slide text tab content -->
       <div id="oc_slidetext" class="fl-fix">
         <div id="segments_text-loading" class="loadingImage"></div>
         <div id="oc-segments_text"></div>
@@ -469,11 +446,41 @@
         <div id="search-loading" class="loadingImage"></div>
         <div id="oc-search-result"></div>
       </div>
+      <!-- END #oc_slidetext -->
+      
+      <!-- Comment tab content -->
+      <div id="oc_comments-list-wrapper" class="fl-fix">
+	<div id="oc_comments-list-loading" class="loadingImage"></div>
+	<div id="oc-comments-list-add-form">
+	  <p class="oc-comments-list-headingtext">
+	    Add A New Comment
+	  </p>
+	  <p class="oc-comments-list-text">
+	    Use the comment checkbox to show/add timed and slide comments.
+	  </p>
+	  <div id="oc-comments-list-addbox">
+	    <div>
+	      <input id="oc-comments-list-namebox" name="Name" type="text">
+	      </div>
+	      <textarea id="oc-comments-list-textbox" ></textarea>
+	      <input id="oc-comments-list-submit" value="Add comment" role="button" type="button" />
+	      <input id="oc-comments-list-submit-timed" value="Add comment at 00:00:00" role="button" type="button" />
+	    </div>
+	  </div>
+	  <div id="oc-comments-list-header">
+	    <p id="oc-comments-list-header-top" class="oc-comments-list-headingtext"></p>
+	    <p id="oc-comments-list-header-bottom" class="oc-comments-list-boldtext"></p>
+	  </div>
+	  <div id="oc-comments-list"></div>
+	</div>
+      </div>
+      <!-- END #oc_comments-list-wrapper -->
+      
     </div>
     <!-- END #oc_ui_tabs -->
-
+    
     <div class="clear"></div>
-
+    
     <div id="segment-tooltip" class="segment-tooltip"></div>
 
     <!-- Shortcut dialog -->

@@ -86,8 +86,6 @@ Opencast.Annotation_Comment_List = (function ()
             }
         });
         
-        // //
-        
         //focus and mark text by click on textbox
         $("#oc-comments-list-textbox").click(function(){        
             $("#oc-comments-list-textbox").focus();
@@ -99,17 +97,16 @@ Opencast.Annotation_Comment_List = (function ()
             $("#oc-comments-list-namebox").select();          
         });
         
-        //
         $.log("init list bindings");
 
         $('#scrubber').bind('changePosition', function (event, ui)         
         {
-        	$("#oc-comments-list-submit-timed").val("Add Comment At "+Opencast.Player.getCurrentTime());
+        	$("#oc-comments-list-submit-timed").val("Add comment at "+Opencast.Player.getCurrentTime());
         });
 
         $('#draggable').bind('dragstop', function (event, ui)         
         {
-        	$("#oc-comments-list-submit-timed").val("Add Comment At "+Opencast.Player.getCurrentTime());
+        	$("#oc-comments-list-submit-timed").val("Add comment at "+Opencast.Player.getCurrentTime());
         });
     }
     
