@@ -450,10 +450,10 @@ Opencast.Annotation_Comment = (function ()
 	      //Workaround: 500ms after resize repaint comments and marks
 	      window.setTimeout(function() {
 	      $.log("after resize and 500ms show annotations");  
-	      Opencast.Annotation_Comment.showAnnotation_Comment();
+	      Opencast.Annotation_Comment.show();
 	      }, 500);            	
 	      }*/
-	    //Opencast.Annotation_Comment.showAnnotation_Comment();
+	    //Opencast.Annotation_Comment.show();
         });     
         
         $(".oc-comment-exit").click(function(){
@@ -495,8 +495,10 @@ Opencast.Annotation_Comment = (function ()
         $('#scrubber').bind('changePosition', function(e) {
             //Check whether comments are on the current slide 
             if(Opencast.segments.getCurrentSlideId() !== oldSlideId){
-                if(annotationCommentDisplayed){
-                    showAnnotation_Comment();
+                if(isOpen === true){
+                    isOpen = false;
+                    isOpening = false;
+                    show();
                     //exit shown infos
         	    $(".oc-comment-exit").click();
                 }                   
@@ -519,7 +521,9 @@ Opencast.Annotation_Comment = (function ()
             //Check wether comments on the current slide 
             if(Opencast.segments.getCurrentSlideId() !== oldSlideId){
                 if(annotationCommentDisplayed){
-                    showAnnotation_Comment();
+                    isOpen = false;
+                    isOpening = false;
+                    show();
                     //exit shown infos
         	    $(".oc-comment-exit").click();                    
                 }                   
