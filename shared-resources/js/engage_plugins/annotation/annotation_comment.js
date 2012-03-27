@@ -172,6 +172,7 @@ Opencast.Annotation_Comment = (function ()
     defaul_comment_text = "Type Your Comment Here!",
     time_offset = 3,
     modus = "private";
+    initialized = false;
     
     /**
      * @memberOf Opencast.Annotation_Comment
@@ -179,6 +180,17 @@ Opencast.Annotation_Comment = (function ()
      */
     function initialize()
     {
+	// no support for IE < version 8
+	if(!($.browser.msie && (parseInt($.browser.version, 10) < 9)))
+	{
+	    initialized = true;
+	}
+
+	if(!initialized)
+	{
+	    return;
+	}
+	
 	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Annotation_Comment);
 	$.log("Opencast.Annotation_Comment registered: " + reg);
 
@@ -746,6 +758,11 @@ Opencast.Annotation_Comment = (function ()
      */
     function show()
     {
+	if(!initialized)
+	{
+	    return;
+	}
+
 	if(!isOpen && !isOpening)
 	{
             isOpening = true;
@@ -1279,6 +1296,11 @@ Opencast.Annotation_Comment = (function ()
      */
     function hide()
     {
+	if(!initialized)
+	{
+	    return;
+	}
+
 	if(isOpen)
 	{
     	    //remove segment marks
@@ -1295,6 +1317,11 @@ Opencast.Annotation_Comment = (function ()
      */
     function doToggle()
     {
+	if(!initialized)
+	{
+	    return;
+	}
+
         if (!isOpen)
         {
             show();
