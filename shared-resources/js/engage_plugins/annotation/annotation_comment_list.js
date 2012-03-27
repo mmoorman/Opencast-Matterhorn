@@ -58,6 +58,20 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function initialize()
     {
+	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Annotation_Comment);
+	$.log("Opencast.Annotation_Comment registered: " + reg);
+
+	// no support for IE < version 8
+	if(!($.browser.msie && (parseInt($.browser.version, 10) < 9)))
+	{
+	    initialized = true;
+	}
+
+	if(!initialized)
+	{
+	    return;
+	}
+
 	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Annotation_Comment_List);
 	$.log("Opencast.Annotation_Comment_List registered: " + reg);
 
@@ -221,6 +235,11 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function show()
     {
+	if(!initialized)
+	{
+	    return;
+	}
+
 	if(!isOpen && !isOpening)
 	{
 	    isOpening = true;
@@ -412,6 +431,11 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function hide()
     {
+	if(!initialized)
+	{
+	    return;
+	}
+
 	if(isOpen)
 	{
             // Change Tab Caption
@@ -432,6 +456,11 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function doToggle()
     {
+	if(!initialized)
+	{
+	    return;
+	}
+
         if (!isOpen)
         {
 	    Opencast.Plugin_Controller.hideAll(Opencast.Annotation_Comment_List);
