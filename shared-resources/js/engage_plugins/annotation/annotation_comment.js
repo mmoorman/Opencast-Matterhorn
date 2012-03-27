@@ -157,7 +157,8 @@ Opencast.Annotation_Comment = (function ()
 {
     var mediaPackageId, duration, relativeSlideCommentPosition, commentAtInSeconds, cm_username, comments_cache, reply_map;
     var isOpening = false,
-    isOpen = false;
+    isOpen = false,
+    addingAcomment = false,
     clickedOnHoverBar = false,
     clickedOnComment = false,
     hoverInfoBox = false,
@@ -721,13 +722,15 @@ Opencast.Annotation_Comment = (function ()
                     //erase cache
                     comments_cache = undefined;
                     //show new comments
+                    isOpen = false;
+                    isOpening = false;
                     show();
                     //check checkbox
                     $('#oc_checkbox-annotation-comment').attr('checked', true);
                     
                     var comment_list_show = $('#oc_btn-comments').attr("title");
                     if(comment_list_show == "Hide Comments"){
-			Opencast.Annotation_Comment_List.showComments();
+                        Opencast.Annotation_Comment_List.show();
                     }                    
 		},
 		error: function (jqXHR, textStatus, errorThrown)
@@ -743,7 +746,7 @@ Opencast.Annotation_Comment = (function ()
      */
     function show()
     {
-	if(!isOpen && !isOpened)
+	if(!isOpen && !isOpening)
 	{
             isOpening = true;
 
@@ -1290,7 +1293,7 @@ Opencast.Annotation_Comment = (function ()
      * @memberOf Opencast.Annotation_Comment
      * @description Toggle Analytics
      */
-    function doToggleAnnotation_Comment()
+    function doToggle()
     {
         if (!isOpen)
         {
@@ -1369,6 +1372,6 @@ Opencast.Annotation_Comment = (function ()
         hoverOutComment: hoverOutComment,
         hoverSlideComment: hoverSlideComment,
         hoverOutSlideComment: hoverOutSlideComment,
-        doToggleAnnotation_Comment: doToggleAnnotation_Comment
+        doToggle: doToggle
     };
 }());
