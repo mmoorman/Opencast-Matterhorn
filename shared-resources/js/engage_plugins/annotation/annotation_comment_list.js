@@ -24,8 +24,10 @@ Opencast.Annotation_Comment_List = (function ()
     var mediaPackageId;
     var COMMENTNOHIDE = "Comments",
     COMMENTSHIDE = "Hide Comments",
+    cm_username = "Your Name!";
     defaultText = "Type Your Comment Here",
-    annotationType = "comment",
+    default_name = "Your Name!",
+    cookieName = "oc_comment_username",
     isOpening = false,
     isOpen = false,
     modus = "private",
@@ -77,9 +79,44 @@ Opencast.Annotation_Comment_List = (function ()
 
         $.log("Comment List Plugin init");
         
+		if(modus === "public")
+		{
+		        //Read Cookie for default Name
+			    cm_username = default_name;
+			    var nameEQ = cookieName + "=";
+			    var ca = document.cookie.split(';');
+			    for(var i = 0; i < ca.length; i++) {
+				var c = ca[i];
+				while(c.charAt(0) == ' ')
+			{
+				    c = c.substring(1, c.length);
+			}
+				if(c.indexOf(nameEQ) == 0)
+			{
+				    cm_username = c.substring(nameEQ.length, c.length);
+			}
+			    }
+		}
+		else if(modus === "private")
+		{
+		    //set username
+		    loggedUser();
+		    //disable username input
+		}
+		else
+		{
+		    //TODO: error deactivate plugin
+		}
+		//if user logged in use his username	
+
+    	
+        
         // //Add Comment Form // //
         $("#oc-comments-list-textbox").val(defaultText);
-  		$("#oc-comments-list-namebox").val(Opencast.Annotation_Comment.getUsername());
+  		$("#oc-comments-list-namebox").val(cm_username);
+  		if(modus === "private"){
+  			$("#oc-comments-list-namebox").attr("disabled","disabled");
+  		}
         $("#oc-comments-list-submit").click(function(){        
             submitComment(false);         
         });
@@ -100,16 +137,26 @@ Opencast.Annotation_Comment_List = (function ()
             }
         });
         
+        //listen to change username event     
+        $(document).bind('changeCmUsername', function(e,uname) {
+        	$.log("CHANGE_CM_USERNAME_TO: "+uname);
+			cm_username = uname;
+			refreshUIUsername();
+
+        });
+        
         //focus and mark text by click on textbox
         $("#oc-comments-list-textbox").click(function(){        
             $("#oc-comments-list-textbox").focus();
             $("#oc-comments-list-textbox").select();          
         });
+		if(modus === "public"){
+	        $("#oc-comments-list-namebox").click(function(){        
+	            $("#oc-comments-list-namebox").focus();
+	            $("#oc-comments-list-namebox").select();          
+	        });			
+		}
 
-        $("#oc-comments-list-namebox").click(function(){        
-            $("#oc-comments-list-namebox").focus();
-            $("#oc-comments-list-namebox").select();          
-        });
         
         $.log("init list bindings");
 
@@ -123,6 +170,34 @@ Opencast.Annotation_Comment_List = (function ()
         	$("#oc-comments-list-submit-timed").val("Add comment at "+Opencast.Player.getCurrentTime());
         });
     }
+    
+    /**
+     * @memberOf Opencast.Annotation_Comment
+     * @description set username from matterhorn system
+     */
+     function loggedUser(){
+        $.ajax(
+        {
+            url: "../../info/me.json",
+            data: "",
+            dataType: 'json',
+            jsonp: 'jsonp',
+            success: function (data)
+            {
+                if ((data !== undefined) || (data['username'] !== undefined))
+                {   
+                     if(data.username === "anonymous"){
+                         //TODO: what is to do if user not logged in, example: deactivate feature
+                         setModus("public");
+                     }else{
+                         cm_username = data.username;
+                         $.log("Comment Plugin set username to: "+cm_username);
+                         $("#oc-comments-list-namebox").val(cm_username);
+                     }
+                }  
+            }
+        });        
+     }
     
     /**
      * @memberOf Opencast.Annotation_Comment_List
@@ -139,7 +214,7 @@ Opencast.Annotation_Comment_List = (function ()
 		nameBoxValue = nameBoxValue.replace(/'/g, "`");
 		nameBoxValue = nameBoxValue.replace(/"/g, "`");
 		$.log("click submit " + textBoxValue + " " + nameBoxValue);
-		if(textBoxValue !== defaultText && nameBoxValue !== Opencast.Annotation_Comment.getDefaultUsername()) {
+		if(textBoxValue !== defaultText && nameBoxValue !== default_name) {
 			if(isTimed) {
 				//pause player
 				Opencast.Player.doPause();
@@ -149,18 +224,17 @@ Opencast.Annotation_Comment_List = (function ()
 			}
 
 			$("#oc-comments-list-textbox").val(defaultText);
-			$("#oc-comments-list-namebox").val(Opencast.Annotation_Comment.getUsername());
+			$("#oc-comments-list-namebox").val(cm_username);
 		} else if(textBoxValue === defaultText) {
 			$("#oc-comments-list-textbox").focus();
 			$("#oc-comments-list-textbox").select();
-		} else if(nameBoxValue === Opencast.Annotation_Comment.getUsername()) {
+		} else if(nameBoxValue === cm_username) {
 			$("#oc-comments-list-namebox").focus();
 			$("#oc-comments-list-namebox").select();
 		} else {
 			$.log("Opencast.Annotation_Comment_List: illegal input state");
 		}
-
-     
+		setUsername(nameBoxValue);    
     }    
 
     /**
@@ -169,7 +243,7 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function refreshUIUsername()
     {
-    	$("#oc-comments-list-namebox").val(Opencast.Annotation_Comment.getUsername());
+    	$("#oc-comments-list-namebox").val(cm_username);
     }
     
     /**
@@ -187,7 +261,7 @@ Opencast.Annotation_Comment_List = (function ()
         */
             
         //Set Username
-        Opencast.Annotation_Comment.setUsername(user);
+        setUsername(user);
        	var timePos = 0;
         if(type === "reply"){
         	//comment data [user]<>[text]<>[type]<>[replyID]
@@ -213,13 +287,17 @@ Opencast.Annotation_Comment_List = (function ()
             success: function (xml)
             {
                 $.log("Add_Comment success");
+                isOpen = false;
+                isOpening = false;
                 show(); //show list
                 //show scrubber comments if a scrubber comment was added
                 if(type === "scrubber"){
-                	if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === false){
-            			$("#oc_checkbox-annotation-comment").attr('checked', true);
-        			}
-        			Opencast.Annotation_Comment.show();
+                	if(Opencast.Annotation_Comment !== undefined){
+	                	if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === false){
+	            			$("#oc_checkbox-annotation-comment").attr('checked', true);
+	        			}
+	        			Opencast.Annotation_Comment.show();
+	        		}    			
                 }                           
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -243,8 +321,9 @@ Opencast.Annotation_Comment_List = (function ()
 	if(!isOpen && !isOpening)
 	{
 	    isOpening = true;
-            // Hide other Tabs
+            // Hide other Tabs		
 	    Opencast.Plugin_Controller.hideAll(Opencast.Annotation_Comment_List);
+	    //Opencast.Plugin_Controller.hideAll([Opencast.Annotation_Comment_List,Opencast.Annotation_Comment]);
             // Change Tab Caption
             $('#oc_btn-comments').attr(
 		{
@@ -420,6 +499,8 @@ Opencast.Annotation_Comment_List = (function ()
 		    {
 			$.log("Comment Ajax call: Requesting data failed "+xhr+" "+ ajaxOptions+" "+ thrownError);
 			isOpening = false;
+			hide();
+			$('#oc_comments-list-loading').hide();
 		    }
 		});
 	}
@@ -505,19 +586,27 @@ Opencast.Annotation_Comment_List = (function ()
             statusCode: {
                 200: function() {
                     $.log("Comment DELETE Ajax call: Request success");
+                    isOpen = false;
+                    isOpening = false;
                     show();
-                    if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === true){
-                        Opencast.Annotation_Comment.show();
-                    }
+                    if(Opencast.Annotation_Comment !== undefined){
+	                    if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === true){
+	                        Opencast.Annotation_Comment.show();
+	                    }       
+	            	}
                 }
             },
             complete:
                 function(jqXHR, textStatus){
                     $.log("Comment DELETE Ajax call: Request success");
+                    isOpen = false;
+                    isOpening = false;
                     show();
-                    if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === true){
-                        Opencast.Annotation_Comment.show();
-                    }
+                    if(Opencast.Annotation_Comment !== undefined){
+	                    if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === true){
+	                        Opencast.Annotation_Comment.show();
+	                    }       
+	            	}
                 }
             
         });
@@ -530,10 +619,11 @@ Opencast.Annotation_Comment_List = (function ()
      */
     function goToComment(commentID, commentValue, commentTime, commentSlide, userId, type)
     {
-        if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === false){
-            $("#oc_checkbox-annotation-comment").attr('checked', true);
-            Opencast.Annotation_Comment.show();
-        }
+        if(Opencast.Annotation_Comment !== undefined){
+            if(Opencast.Annotation_Comment.getAnnotationCommentDisplayed() === true){
+                Opencast.Annotation_Comment.show();
+            }       
+    	}
         
         //click on comment
         if(type === "scrubber"){
@@ -571,7 +661,7 @@ Opencast.Annotation_Comment_List = (function ()
 	 		$("#comment-row-"+commentID).after(replyTemplate);
 			$("#oc-comment-list-reply-wrapper").slideDown(600);
 			//draw identicon			
-			pwEncrypt = $().crypt( {method: 'md5',source: user});
+			pwEncrypt = $().crypt( {method: 'md5',source: cm_username});
             $(".oc-comment-list-user-icon-reply").html(pwEncrypt);
             $(".oc-comment-list-user-icon-reply").identicon5({rotate:true, size:50});
 			//Submit Button
@@ -585,18 +675,19 @@ Opencast.Annotation_Comment_List = (function ()
 				nameBoxValue = nameBoxValue.replace(/'/g, "`");
 				nameBoxValue = nameBoxValue.replace(/"/g, "`");
 				$.log("click submit " + textBoxValue + " " + nameBoxValue);
-				if(textBoxValue !== defaultText && nameBoxValue !== Opencast.Annotation_Comment.getDefaultUsername()) {
+				if(textBoxValue !== defaultText && nameBoxValue !== default_name) {
 					addComment(textBoxValue, nameBoxValue, "reply",0, commentID);
 					cancelReply();
 				} else if(textBoxValue === defaultText) {
 					$("#oc-comments-list-reply-textbox").focus();
 					$("#oc-comments-list-reply-textbox").select();
-				} else if(nameBoxValue === Opencast.Annotation_Comment.getUsername()) {
+				} else if(nameBoxValue === cm_username) {
 					$("#oc-comments-list-reply-namebox").focus();
 					$("#oc-comments-list-reply-namebox").select();
 				} else {
 					$.log("Opencast.Annotation_Comment_List: illegal input state");
-				}			
+				}
+				setUsername(nameBoxValue);			
 			});
 			//Cancel Button
 			$("#oc-comments-list-reply-cancel").click(function(){
@@ -604,7 +695,7 @@ Opencast.Annotation_Comment_List = (function ()
 			});
 			//Default Text and Name
 			$("#oc-comments-list-reply-textbox").val(defaultText);
-	  		$("#oc-comments-list-reply-namebox").val(Opencast.Annotation_Comment.getUsername());
+	  		$("#oc-comments-list-reply-namebox").val(cm_username);
 	  		// Handler keypress CTRL+Enter on textbox
 	        $("#oc-comments-list-reply-textbox").keyup(function (event)
 	        {
@@ -657,13 +748,41 @@ Opencast.Annotation_Comment_List = (function ()
         modus = m;
     }
     
+        /**
+     * @memberOf Opencast.Annotation_Comment_List
+     * @description Set username
+     * @param String username
+     */
+    function setUsername(user)
+    {
+    	if(modus === "public"){
+	    	//Create cookie with username
+	        document.cookie = cookieName+"="+user+"; path=/engage/ui/";
+	    	cm_username = user;
+	    	//Refresh UI
+    		refreshUIUsername();
+	    }
+	   	//trigger change username event
+		$(document).trigger("changeCmUsername",cm_username);
+    }
+    
+    /**
+     * @memberOf Opencast.Annotation_Comment_List
+     * @description Get username
+     */
+    function getUsername()
+    {
+    	return cm_username;
+    }
+    
     return {
         initialize: initialize,
         show: show,
         hide: hide,
-        refreshUIUsername: refreshUIUsername,
         clickCommentList: clickCommentList,
         deleteComment: deleteComment,
+        setUsername: setUsername,
+        getUsername: getUsername,
         getModus: getModus,
         setModus: setModus,
         replyComment: replyComment,
