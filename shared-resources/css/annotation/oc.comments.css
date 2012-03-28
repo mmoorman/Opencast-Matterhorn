@@ -32,13 +32,7 @@
 }
 
 #oc-comment-scrubber-box{
-    display:none;
-    /*box-shadow:0px 2px 5px #333333;*/
-    height: 20px;
-    /*background: none repeat scroll 0 0 rgba(83, 168, 253, 0.95);*/
-    /*-moz-linear-gradient(19% 75% 90deg,#ababab, #c9c9c9, #c7c7c7 100%);
-    -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ABABAB), to(#C9C9C9), color-stop(1,#C7C7C7));*/
-    
+    display:none;    
 }
 
 #annotation_comment_holder{

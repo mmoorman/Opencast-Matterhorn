@@ -390,31 +390,6 @@ Opencast.Initialize = (function ()
         $('#oc_video-size-controls').bind('mouseout', dropdown_timer);
     }
 
-    function changeBalloonPositionStatistics()
-    {
-	if($('.oc-comment-scrubber-baloon').length)
-	{
-	    if(analyticsIsVisible)
-	    {
-		balloonLastPosTopStatistics = $('.oc-comment-scrubber-baloon').first().position().top;
-		$('.oc-comment-scrubber-baloon').css('top', '-19px');
-	    } else
-	    {
-		// $('.oc-comment-scrubber-baloon').css('top', balloonLastPosTopStatistics + 'px');
-		$('.oc-comment-scrubber-baloon').css('top', '8px');
-	    }
-	}
-    }
-
-    function changeBalloonPositionComments()
-    {
-	if($('.oc-comment-scrubber-baloon').length)
-	{
-	    balloonLastPosTopComments = $('.oc-comment-scrubber-baloon').first().position().top;
-	    // console.log("balloonLastPosTopComments: " + balloonLastPosTopComments);
-	}
-    }
-
     $(document).ready(function ()
     {
         keyboardListener();

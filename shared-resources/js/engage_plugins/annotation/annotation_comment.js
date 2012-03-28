@@ -286,7 +286,7 @@ Opencast.Annotation_Comment = (function ()
 					   {
 					       $("#oc-comment-info-value-wrapper").html(
 						   '<div id="oc-comment-info-header-1" class="oc-comment-info-cm-header">'+
-						       '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+           
+						       '<input id="oc-comment-add-submit" class="oc-comment-submit" type="image" src="/engage/ui/img/misc/space.png" name="Add" alt="Add" title="Add" value="Add">'+         
 						       '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'" disabled="disabled">'+
 						       '<div id="oc-comment-info-header-text-1" class="oc-comment-info-header-text"> at '+curTime+'</div>'+
 						       '</div>'+
@@ -297,7 +297,7 @@ Opencast.Annotation_Comment = (function ()
 					   }else if(modus === "public"){
 					       $("#oc-comment-info-value-wrapper").html(
 						   '<div id="oc-comment-info-header-1" class="oc-comment-info-cm-header">'+
-						       '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+           
+						       '<input id="oc-comment-add-submit" class="oc-comment-submit" type="image" src="/engage/ui/img/misc/space.png" name="Add" alt="Add" title="Add" value="Add">'+           
 						       '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'">'+
 						       '<div id="oc-comment-info-header-text-1" class="oc-comment-info-header-text"> at '+curTime+'</div>'+
 						       '</div>'+
@@ -375,7 +375,7 @@ Opencast.Annotation_Comment = (function ()
 	    if(modus === "private"){
 		$("#oc-comment-info-value-wrapper").html(
 		    '<div id="oc-comment-info-header-1" class="oc-comment-info-cm-header">'+
-		        '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+       	
+		        '<input id="oc-comment-add-submit" class="oc-comment-submit" type="image" src="/engage/ui/img/misc/space.png" name="Add" alt="Add" title="Add" value="Add">'+      	
 		        '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" disabled="disabled" value="'+cm_username+'">'+
 		        '<div id="oc-comment-info-header-text-1" class="oc-comment-info-header-text"> at Slide '+curSlide+'</div>'+
 		        '</div>'+
@@ -388,7 +388,7 @@ Opencast.Annotation_Comment = (function ()
 	    {
 		$("#oc-comment-info-value-wrapper").html(
 		    '<div id="oc-comment-info-header-1" class="oc-comment-info-cm-header">'+
-		        '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+       	
+		        '<input id="oc-comment-add-submit" class="oc-comment-submit" type="image" src="/engage/ui/img/misc/space.png" name="Add" alt="Add" title="Add" value="Add">'+      	
 		        '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'">'+
 		        '<div id="oc-comment-info-header-text-1" class="oc-comment-info-header-text"> at Slide '+curSlide+'</div>'+
 		        '</div>'+
