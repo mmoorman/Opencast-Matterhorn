@@ -193,21 +193,8 @@ Opencast.Annotation_Comment = (function ()
 	
 	var reg = Opencast.Plugin_Controller.registerPlugin(Opencast.Annotation_Comment);
 	$.log("Opencast.Annotation_Comment registered: " + reg);
-
-	//IDENTICON CODE
-	/*
-	  pwEncrypt = $().crypt( {
-	  method: 'md5',
-	  source: "Martin"
-	  });
-	  
-	  $("#identicon2").html(pwEncrypt);
-	  
-	  $("#identicon1").identicon5();
-	  $("#identicon2").identicon5();
-	*/
     	
-    	if(modus === "public")
+	if(modus === "public")
 	{
             //Read Cookie for default Name
     	    cm_username = default_name;
@@ -235,8 +222,7 @@ Opencast.Annotation_Comment = (function ()
 	{
 	    //TODO: error deactivate plugin
 	}
-	//if user logged in use his username
-	
+	//if user logged in use his username	
 	$.log("Comment Plugin set username to: "+cm_username);
     	
        	// Handler keypress ALT+CTRL+a
@@ -466,8 +452,26 @@ Opencast.Annotation_Comment = (function ()
 	      }, 500);            	
 	      }*/
 	    //Opencast.Annotation_Comment.show();
-        });     
+        });
         
+        //listen to change video size event
+        $(document).bind('changeVideoSize', function(e) {
+        	$.log("CHANGE_VIDEO_SIZE_TO: "+Opencast.Player.getCurrentVideoSize());
+        	if(Opencast.Player.getCurrentVideoSize() !== "videoSizeMulti"){
+        		//deactivate slide comments
+        		$("#oc_slide-comments").hide();
+        	}else{
+        		//avtivate slide comments
+        		$("#oc_slide-comments").show();
+        	}
+        });
+        
+        //listen to change username event     
+        $(document).bind('changeCmUsername', function(e,uname) {
+        	$.log("CHANGE_CM_USERNAME_TO: "+uname);
+			cm_username = uname;
+        });
+                
         $(".oc-comment-exit").click(function(){
             // hide info box
             $("#comment-Info").hide();
@@ -566,7 +570,7 @@ Opencast.Annotation_Comment = (function ()
 
     /**
      * @memberOf Opencast.Annotation_Comment
-     * @description handler for submit btn
+     * @description set username from matterhorn system
      */
      function loggedUser(){
         $.ajax(
@@ -581,13 +585,13 @@ Opencast.Annotation_Comment = (function ()
                 {   
                      if(data.username === "anonymous"){
                          //TODO: what is to do if user not logged in, example: deactivate feature
+                         setModus("public");
                      }else{
                          cm_username = data.username;
                      }
                 }  
             }
-        });     
-     
+        });        
      }
     /**
      * @memberOf Opencast.Annotation_Comment
@@ -649,6 +653,7 @@ Opencast.Annotation_Comment = (function ()
 		addComment(nameValue,replyID,commentValue,"reply")
 	    }
 	    addingAcomment = false;
+	    setUsername(nameValue);
 	}
     }
 
@@ -659,12 +664,13 @@ Opencast.Annotation_Comment = (function ()
      */
     function setUsername(user)
     {
-    	//Create cookie with username
-        document.cookie = cookieName+"="+user+"; path=/engage/ui/";
-    	cm_username = user;
-    	
-    	//Refresh UI
-    	Opencast.Annotation_Comment_List.refreshUIUsername();
+    	if(modus === "public"){
+	    	//Create cookie with username
+	        document.cookie = cookieName+"="+user+"; path=/engage/ui/";
+	    	cm_username = user;
+	    }
+	  	//trigger change username event
+		$(document).trigger("changeCmUsername",cm_username);
     }
     
     /**
@@ -674,15 +680,6 @@ Opencast.Annotation_Comment = (function ()
     function getUsername()
     {
     	return cm_username;
-    }
-    
-    /**
-     * @memberOf Opencast.Annotation_Comment
-     * @description Get default username
-     */
-    function getDefaultUsername()
-    {
-    	return default_name;
     }
     
     /**
@@ -1393,7 +1390,6 @@ Opencast.Annotation_Comment = (function ()
         getUsername: getUsername,
         getModus: getModus,
         setModus: setModus,
-        getDefaultUsername: getDefaultUsername,
         setDuration: setDuration,
         setMediaPackageId: setMediaPackageId,
         clickComment: clickComment,
