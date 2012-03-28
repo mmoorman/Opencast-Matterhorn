@@ -527,7 +527,7 @@ Opencast.Annotation_Comment = (function ()
 			}, 2000); 
             	    }
             	}
-            }); 
+            });
         });
         $('#draggable').bind('dragstop', function (event, ui){
             //Check wether comments on the current slide 

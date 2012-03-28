@@ -25,9 +25,9 @@ Opencast.Analytics = (function ()
     var ANALYTICS = "Analytics",
         ANALYTICSHIDE = "Analytics off",
         intervalRunning = false,
+        isOpen = false,
         waitForMove = 150,
         updateInterval = 5000; // in ms
-    var isOpen = false;
     
     /**
      * @memberOf Opencast.Analytics
