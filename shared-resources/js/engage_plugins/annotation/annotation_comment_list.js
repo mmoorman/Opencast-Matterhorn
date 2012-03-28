@@ -253,7 +253,7 @@ Opencast.Annotation_Comment_List = (function ()
             $('#oc_btn-comments').html(COMMENTSHIDE);
             $("#oc_btn-comments").attr('aria-pressed', 'true');
             // Show a loading Image
-            $('#oc_comments-list-wrapper').show();
+            $('#oc_comments').show();
             $('#oc_comments-list-loading').show();
             $('#oc-comments-list-header').hide();
             $('#oc-comments-list').hide();
@@ -445,7 +445,7 @@ Opencast.Annotation_Comment_List = (function ()
 		});
             $('#oc_btn-comments').html(COMMENTNOHIDE);
             $("#oc_btn-comments").attr('aria-pressed', 'false');
-            $('#oc_comments-list-wrapper').hide();
+            $('#oc_comments-list').hide();
 	    isOpen = false;
 	}
     }

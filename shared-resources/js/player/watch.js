@@ -804,7 +804,6 @@ Opencast.Watch = (function ()
         Opencast.Player.addEvent(Opencast.logging.SEEK_SEGMENT);
     }
 
-
     /**
      * @memberOf Opencast.Watch
      * @description Gets the OS-specific shortcuts of the client
