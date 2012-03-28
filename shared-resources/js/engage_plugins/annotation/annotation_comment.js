@@ -504,6 +504,14 @@ Opencast.Annotation_Comment = (function ()
                 $("#oc-comment-add-submit-name").click();
             }
         });
+        //show slide comment box in dependency of the video size
+        if(Opencast.Player.getCurrentVideoSize() !== "videoSizeMulti"){
+            //deactivate slide comments
+            $("#oc_slide-comments").hide();
+        }else{
+            //avtivate slide comments
+            $("#oc_slide-comments").show();
+        }
         
         //// UI END ////
 	
