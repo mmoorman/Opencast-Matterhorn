@@ -519,7 +519,7 @@ Opencast.Annotation_Comment = (function ()
             //Check weather comments are on the current time
             $('div[id^="scComment"]').each(function(i){
             	if((parseInt(Opencast.Player.getCurrentPosition())+1) === parseInt($(this).attr("inpoint"))){
-            	    if(clickedOnComment === false){
+            	    if(clickedOnComment === false && isOpen === true){
 	            	//show comment info for 3 seconds
 	            	$(this).mouseover();
 	            	window.setTimeout(function() {  
@@ -1071,8 +1071,8 @@ Opencast.Annotation_Comment = (function ()
             $("#oc-comment-cm-textbox-"+commentId).after(
                 '<div id="oc-comment-reply-form" style="display:none;">'+
                     '<div id="oc-comment-info-header-reply" class="oc-comment-info-reply-header">'+
-                    '<input id="oc-comment-add-cancel" class="oc-comment-cancel" value="Cancel" role="button" type="button"  />'+
-                    '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button"  />'+           
+                    '<input id="oc-comment-add-cancel" class="oc-comment-cancel" type="image" src="/engage/ui/img/misc/space.png" name="cancel" alt="cancel" title="cancel" value="cancel">'+
+                    '<input id="oc-comment-add-submit" class="oc-comment-submit" type="image" src="/engage/ui/img/misc/space.png" name="Add" alt="Add" title="Add" value="Add">'+
                     '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'" disabled="disabled">'+
                     '</div>'+
                     '<textarea id="oc-comment-add-reply-textbox" class="oc-comment-textbox">Type Your Comment Here</textarea>'+
@@ -1084,8 +1084,8 @@ Opencast.Annotation_Comment = (function ()
             $("#oc-comment-cm-textbox-"+commentId).after(
                 '<div id="oc-comment-reply-form" style="display:none;">'+
                     '<div id="oc-comment-info-header-reply" class="oc-comment-info-reply-header">'+
-                    '<input id="oc-comment-add-cancel" class="oc-comment-cancel" value="Cancel" role="button" type="button"  />'+
-                    '<input id="oc-comment-add-submit" class="oc-comment-submit" value="Add" role="button" type="button" />'+           
+                    '<input id="oc-comment-add-cancel" class="oc-comment-cancel" type="image" src="/engage/ui/img/misc/space.png" name="cancel" alt="cancel" title="cancel" value="cancel">'+
+                    '<input id="oc-comment-add-submit" class="oc-comment-submit" type="image" src="/engage/ui/img/misc/space.png" name="Add" alt="Add" title="Add" value="Add">'+        
                     '<input id="oc-comment-add-namebox" class="oc-comment-namebox" type="text" value="'+cm_username+'">'+
                     '</div>'+
                     '<textarea id="oc-comment-add-reply-textbox" class="oc-comment-textbox">Type Your Comment Here</textarea>'+
