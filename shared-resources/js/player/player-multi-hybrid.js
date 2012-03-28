@@ -1437,6 +1437,7 @@ Opencast.Player = (function ()
             $("#draggable").css("left", newPos);
             $("#scrubber").css("left", newPos);
             $("#play-progress").css("width", newPos);
+            $('#scrubber').trigger('changePosition');
         }
     }
 
