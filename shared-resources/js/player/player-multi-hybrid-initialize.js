@@ -58,11 +58,6 @@ Opencast.Initialize = (function ()
         ddmenuitem = 0,
         dropdownActive = false,
         keysSet = false,
-        analyticsIsVisible = false,
-        commentsIsVisible = false,
-        balloonPositionChanged = false,
-        balloonLastPosTopStatistics = 0,
-        balloonLastPosTopComments = 0,
         KEY_0,
         KEY_1,
         KEY_2,
@@ -838,8 +833,6 @@ Opencast.Initialize = (function ()
         $('#oc_checkbox-statistics').click(function ()
         {
             Opencast.Analytics.doToggle();
-	    analyticsIsVisible = !analyticsIsVisible;
-	    changeBalloonPositionStatistics();
         });
         $('#oc_checkbox-annotations').click(function ()
         {
@@ -848,8 +841,6 @@ Opencast.Initialize = (function ()
         $('#oc_checkbox-annotation-comment').click(function ()
         {
             Opencast.Annotation_Comment.doToggle();
-	    commentsIsVisible = !commentsIsVisible;
-	    changeBalloonPositionComments();
         });
         //bind click events to show dialog
         $('#oc_shortcuts').dialog(
