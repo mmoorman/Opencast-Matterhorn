@@ -58,11 +58,6 @@ Opencast.Initialize = (function ()
         ddmenuitem = 0,
         dropdownActive = false,
         keysSet = false,
-        analyticsIsVisible = false,
-        commentsIsVisible = false,
-        balloonPositionChanged = false,
-        balloonLastPosTopStatistics = 0,
-        balloonLastPosTopComments = 0,
         KEY_0,
         KEY_1,
         KEY_2,
@@ -388,31 +383,6 @@ Opencast.Initialize = (function ()
     {
         $('#oc_video-size-controls').bind('mouseover', dropdownVideo_open);
         $('#oc_video-size-controls').bind('mouseout', dropdown_timer);
-    }
-
-    function changeBalloonPositionStatistics()
-    {
-	if($('.oc-comment-scrubber-baloon').length)
-	{
-	    if(analyticsIsVisible)
-	    {
-		balloonLastPosTopStatistics = $('.oc-comment-scrubber-baloon').first().position().top;
-		$('.oc-comment-scrubber-baloon').css('top', '-19px');
-	    } else
-	    {
-		// $('.oc-comment-scrubber-baloon').css('top', balloonLastPosTopStatistics + 'px');
-		$('.oc-comment-scrubber-baloon').css('top', '8px');
-	    }
-	}
-    }
-
-    function changeBalloonPositionComments()
-    {
-	if($('.oc-comment-scrubber-baloon').length)
-	{
-	    balloonLastPosTopComments = $('.oc-comment-scrubber-baloon').first().position().top;
-	    // console.log("balloonLastPosTopComments: " + balloonLastPosTopComments);
-	}
     }
 
     $(document).ready(function ()
@@ -867,8 +837,6 @@ Opencast.Initialize = (function ()
         $('#oc_checkbox-statistics').click(function ()
         {
             Opencast.Analytics.doToggle();
-	    analyticsIsVisible = !analyticsIsVisible;
-	    changeBalloonPositionStatistics();
         });
         $('#oc_checkbox-annotations').click(function ()
         {
@@ -877,8 +845,6 @@ Opencast.Initialize = (function ()
         $('#oc_checkbox-annotation-comment').click(function ()
         {
             Opencast.Annotation_Comment.doToggle();
-	    commentsIsVisible = !commentsIsVisible;
-	    changeBalloonPositionComments();
         });
         //bind click events to show dialog
         $('#oc_shortcuts').dialog(
