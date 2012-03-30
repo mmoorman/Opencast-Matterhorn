@@ -252,8 +252,9 @@ ocSeries.loadSeries = function(data) {
     $('#' + key).attr('value', data[key][0].value);
   }
   
-  
-  $('#annotation_enabled').prop("checked", oc_data.annotation[0].value == "true");
+  if(oc_data != undefined) {
+    $('#annotation_enabled').prop("checked", oc_data.annotation[0].value == "true");
+  }
   
 }
 
