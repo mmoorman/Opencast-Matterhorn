@@ -38,7 +38,8 @@ $(document).ready( function() {
             }
 
 	    // no comments plugin support for IE 8
-	    if(($.browser.msie && (parseInt($.browser.version, 10) < 9)))
+	    if(($.browser.msie && (parseInt($.browser.version, 10) < 9)
+                || !annotationsAllowed()))
 	    {
                 // Disable and grey out "Comment" Tab
                 $("#oc_ui_tabs").tabs(
@@ -47,12 +48,17 @@ $(document).ready( function() {
                 });
 		$('#oc_checkbox-annotation-comment').detach();
 		$('#oc_label-annotation-comment').detach();
+                $('#oc_comment-control').detach();
+                $('#oc_btn-comments').parent().detach();
 		$("#ie8comments-browser-version").html($.browser.version);
 		$("#ie8comments-close").click(function()
 					{
 					    $("#oc_ie8comments").hide();
 					});
-                $("#oc_ie8comments").show();
+                                        
+                if(($.browser.msie && (parseInt($.browser.version, 10) < 9))) {
+                  $("#oc_ie8comments").show();
+                }
 	    } else
 	    {
                 $("#oc_ie8comments").detach();
@@ -79,3 +85,40 @@ $(document).ready( function() {
         }
     });
 });
+
+function annotationsAllowed() {
+  var id = $.getURLParameter("id");
+  var restEpisode = Opencast.engage.getSearchServiceEpisodeJsonURL() + "?id=" + id;
+  var restSeries = "../../series/";
+  var OC_NS = "http://www.opencastproject.org/matterhorn/";
+  
+  var series_id = "";
+  
+  $.ajax({
+    url: restEpisode,
+    async: false,
+    success: function(data) {
+      if(data['search-results'].result.dcIsPartOf) {
+        series_id = data['search-results'].result.dcIsPartOf;
+      }
+    }
+  })
+  
+  if(series_id == "") {
+    return false;
+  }
+  
+  var annotations_allowed = false;
+  
+  $.ajax({
+    url: restSeries + series_id + ".json",
+    async: false,
+    success: function(data) {
+      if(data[OC_NS] != undefined && data[OC_NS].annotation != undefined) {
+        annotations_allowed = data[OC_NS].annotation[0].value == "true";
+      }
+    }
+  })
+  
+  return annotations_allowed;
+}

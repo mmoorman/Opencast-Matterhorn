@@ -93,6 +93,11 @@
         <ul class="oc-ui-form-list">
           <li>
             <label class="scheduler-label">&nbsp;</label>
+            <input type="checkbox" id="annotation_enabled" />
+            <label>Allow annotations</label>
+          </li>
+          <li>
+            <label class="scheduler-label">&nbsp;</label>
             <input type="button" value="Save" id="submitButton" />
             <input type="button" value="Cancel" id="cancelButton" />
             <input type="hidden" id="id" />

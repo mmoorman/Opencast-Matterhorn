@@ -29,6 +29,9 @@ var ANOYMOUS_URL = "/info/me.json";
 var CREATE_MODE = 1;
 var EDIT_MODE   = 2;
 
+var PURL_NS = "http://purl.org/dc/terms/";
+var OC_NS = "http://www.opencastproject.org/matterhorn/";
+
 ocSeries.mode = CREATE_MODE;
 
 /*    UI FUNCTIONS    */
@@ -57,12 +60,12 @@ ocSeries.init = function(){
   
   //Add folding action for hidden sections.
   $('.oc-ui-collapsible-widget .form-box-head').click(
-  function() {
-    $(this).children('.ui-icon').toggleClass('ui-icon-triangle-1-e');
-    $(this).children('.ui-icon').toggleClass('ui-icon-triangle-1-s');
-    $(this).next().toggle();
-    return false;
-  });
+    function() {
+      $(this).children('.ui-icon').toggleClass('ui-icon-triangle-1-e');
+      $(this).children('.ui-icon').toggleClass('ui-icon-triangle-1-s');
+      $(this).next().toggle();
+      return false;
+    });
     
   $('#additionalContentTabs').tabs();
   
@@ -242,67 +245,72 @@ ocSeries.Internationalize = function(){
 }
 
 ocSeries.loadSeries = function(data) {
-  data = data['http://purl.org/dc/terms/']
+  oc_data = data[OC_NS];
+  data = data[PURL_NS];
   $("#id").val(data['identifier'][0].value);
   for(var key in data) {
     $('#' + key).attr('value', data[key][0].value);
   }
+  
+  
+  $('#annotation_enabled').prop("checked", oc_data.annotation[0].value == "true");
+  
 }
 
 ocSeries.RegisterComponents = function(){
   //Core Metadata
   ocSeries.additionalComponents.title = new ocAdmin.Component(
-  ['title'],
-  {
-    label:'seriesLabel',
-    required:true
-  }
-);
+    ['title'],
+    {
+      label:'seriesLabel',
+      required:true
+    }
+    );
   
   ocSeries.additionalComponents.contributor = new ocAdmin.Component(
-  ['contributor'],
-  {
-    label:'contributorLabel'
-  }
-);
+    ['contributor'],
+    {
+      label:'contributorLabel'
+    }
+    );
   
   ocSeries.additionalComponents.creator = new ocAdmin.Component(
-  ['creator'],
-  {
-    label: 'creatorLabel'
-  }
-);
+    ['creator'],
+    {
+      label: 'creatorLabel'
+    }
+    );
   
   //Additional Metadata
   ocSeries.additionalComponents.subject = new ocAdmin.Component(
-  ['subject'],
-  {
-    label: 'subjectLabel'
-  }
-)
+    ['subject'],
+    {
+      label: 'subjectLabel'
+    }
+    )
   
   ocSeries.additionalComponents.language = new ocAdmin.Component(
-  ['language'],
-  {
-    label: 'languageLabel'
-  }
-)
+    ['language'],
+    {
+      label: 'languageLabel'
+    }
+    )
   
   ocSeries.additionalComponents.license = new ocAdmin.Component(
-  ['license'],
-  {
-    label: 'licenseLabel'
-  }
-)
+    ['license'],
+    {
+      label: 'licenseLabel'
+    }
+    )
   
   ocSeries.components.description = new ocAdmin.Component(
-  ['description'],
-  {
-    label: 'descriptionLabel'
-  }
-)
+    ['description'],
+    {
+      label: 'descriptionLabel'
+    }
+    )
   
-  /*
+/*
   //Extended Metadata
   ocAdmin.additionalComponents.type
   //ocAdmin.additionalComponents.subtype
@@ -321,7 +329,7 @@ ocSeries.createDublinCoreDocument = function() {
   dcDoc = ocUtils.createDoc('dublincore', 'http://www.opencastproject.org/xsd/1.0/dublincore/');
   $(dcDoc.documentElement).attr('xmlns:dcterms', 'http://purl.org/dc/terms/');
   $(dcDoc.documentElement).attr('xmlns:dc', 'http://purl.org/dc/elements/1.1/');
-  $(dcDoc.documentElement).attr('xmlns:oc', 'http://www.opencastproject.org/matterhorn');
+  $(dcDoc.documentElement).attr('xmlns:oc', 'http://www.opencastproject.org/matterhorn/');
   $('.dc-metadata-field').each(function() {
     $field = $(this);
     var $newElm = $(dcDoc.createElement('dcterms:' + $field.attr('id')));
@@ -333,6 +341,11 @@ ocSeries.createDublinCoreDocument = function() {
     $newElm.text($('#id').val());
     $(dcDoc.documentElement).append($newElm);
   }
+  
+  var $annotation = $(dcDoc.createElement('oc:annotation'));
+  $annotation.text($('#annotation_enabled').is(':checked') ? 'true' : 'false');
+  $(dcDoc.documentElement).append($annotation);
+  
   var out = ocUtils.xmlToString(dcDoc);
   return out;
 }
@@ -392,7 +405,7 @@ ocSeries.SeriesSubmitComplete = function(xhr, status){
   if(xhr.status == 201 || xhr.status == 204){
     document.location = SERIES_LIST_URL;
   }
-  /*for(var k in ocSeries.components){
+/*for(var k in ocSeries.components){
     if(i18n[k]){
       $("#data-" + k).show();
       $("#data-" + k + " > .data-label").text(i18n[k].label + ":");
